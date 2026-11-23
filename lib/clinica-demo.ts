@@ -1,6 +1,6 @@
 // Indicadores da CLÍNICA FICTÍCIA da demonstração (Clínica Vida Plena).
 // Série determinística (mesma semente, mesmos números) para o painel não "mudar sozinho".
-// Os alertas, pacientes, documentos e acessos do painel vêm do banco; só estes agregados são simulados.
+// Agenda, alertas, pacientes, documentos e acessos do painel vêm do banco; só estes agregados de 30 dias são simulados.
 
 function semente(n: number) { let x = n; return () => { x = (x * 1664525 + 1013904223) % 4294967296; return x / 4294967296 } }
 const SP = 'America/Sao_Paulo'
@@ -9,7 +9,7 @@ const iso = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart
 
 export type Ponto = { data: string; v: number }
 
-export function serieAtendimentos(dias = 30, deslocamento = 0): Ponto[] {
+export function serieAtendimentos(dias = 30, deslocamento = 0, hojeQtd = 6): Ponto[] {
   const r = semente(2026 + deslocamento)
   const fim = hojeSP(); fim.setDate(fim.getDate() - deslocamento)
   const out: Ponto[] = []
@@ -19,13 +19,13 @@ export function serieAtendimentos(dias = 30, deslocamento = 0): Ponto[] {
     const base = dow === 0 ? 0 : dow === 6 ? 3 : 5 + (dow === 1 ? 1 : 0)
     const v = dow === 0 ? 0 : Math.round(base + r() * 3)
     // o último dia da série é hoje: vale o tamanho da agenda de hoje, para os números baterem
-    out.push({ data: iso(d), v: i === 0 && deslocamento === 0 ? agendaHoje().length : v })
+    out.push({ data: iso(d), v: i === 0 && deslocamento === 0 ? hojeQtd : v })
   }
   return out
 }
 
-export function indicadores() {
-  const atual = serieAtendimentos(30), anterior = serieAtendimentos(30, 30)
+export function indicadores(hojeQtd = 6) {
+  const atual = serieAtendimentos(30, 0, hojeQtd), anterior = serieAtendimentos(30, 30, hojeQtd)
   const soma = (s: Ponto[]) => s.reduce((a, p) => a + p.v, 0)
   const at = soma(atual), ant = soma(anterior)
   const semanal = (vals: number[]) => vals.map((v, i) => ({ data: String(i), v }))
@@ -40,15 +40,3 @@ export function indicadores() {
   }
 }
 
-export type Consulta = { hora: string; nome: string; detalhe: string; profissional: string; status: 'confirmado' | 'aguardando' | 'agendado' | 'atendido'; pacienteId?: string }
-
-export function agendaHoje(): Consulta[] {
-  return [
-    { hora: '08:30', nome: 'Rosa Antunes', detalhe: 'Retorno · pressão alta', profissional: 'Dra. Beatriz Lima', status: 'atendido' },
-    { hora: '10:30', nome: 'Camila Rocha', detalhe: 'Anemia na gestação · resultado de exames', profissional: 'Dra. Beatriz Lima', status: 'confirmado', pacienteId: '00000000-0000-4000-8000-0000000000c3' },
-    { hora: '11:15', nome: 'Diego Ferraz', detalhe: 'Primeira consulta · dor lombar', profissional: 'Dra. Paula Nogueira', status: 'aguardando' },
-    { hora: '14:00', nome: 'Lívia Souza', detalhe: 'Retorno após UPA · 7 anos', profissional: 'Dra. Beatriz Lima', status: 'confirmado', pacienteId: '00000000-0000-4000-8000-0000000000c1' },
-    { hora: '15:30', nome: 'José Almeida', detalhe: 'Retorno · dor no joelho', profissional: 'Dra. Paula Nogueira', status: 'confirmado', pacienteId: '00000000-0000-4000-8000-0000000000c2' },
-    { hora: '16:45', nome: 'Helena Prates', detalhe: 'Check-up anual', profissional: 'Dra. Beatriz Lima', status: 'agendado' },
-  ]
-}

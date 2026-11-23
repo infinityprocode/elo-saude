@@ -1,9 +1,9 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 
-export type Org = { id: string; nome: string; tipo: string; cidade: string }
-export type Prof = { id: string; nome: string; conselho: string; registro: string; especialidade: string | null }
+export type Org = { id: string; nome: string; tipo: string; rede: 'publica' | 'privada'; cidade: string }
+export type Prof = { id: string; nome: string; conselho: string; numero: string; uf: string; especialidade: string | null }
 export type Paciente = { id: string; nome: string; nascimento: string; sexo: string | null; peso_kg: number | null; tipo_sanguineo: string | null; cidade: string | null; contato_emergencia: string | null; gestante: boolean }
-export type Atendimento = { id: string; data: string; tipo: string; queixa: string | null; hipotese: string | null; conduta: string | null; origem: string; organizacoes: Org | null; profissionais: Prof | null }
+export type Atendimento = { id: string; data: string; tipo: string; rede: 'sus' | 'particular' | 'convenio'; operadora: string | null; queixa: string | null; hipotese: string | null; conduta: string | null; origem: string; organizacoes: Org | null; profissionais: Prof | null }
 export type Condicao = { id: string; descricao: string; cid10: string | null; status: string; cronica: boolean; inicio: string | null; origem: string; atendimento_id: string | null }
 export type Medicamento = { id: string; nome: string; principio_ativo: string; dose: string | null; posologia: string | null; inicio: string | null; fim: string | null; ativo: boolean; origem: string; atendimento_id: string | null; profissionais: Prof | null }
 export type Alergia = { id: string; substancia: string; reacao: string | null; gravidade: string | null; registrada_em: string | null; origem: string }
@@ -20,15 +20,16 @@ export type Dossie = {
   documentos: Documento[]
 }
 
-const ORG = 'organizacoes(id,nome,tipo,cidade)'
-const PROF = 'profissionais(id,nome,conselho,registro,especialidade)'
+const ORG = 'organizacoes(id,nome,tipo,rede,cidade)'
+const PROF = 'profissionais(id,nome,conselho,numero,uf,especialidade)'
 
-// Carrega o dossiê inteiro. Com o cliente do usuário, o RLS garante que só vem o que ele pode ver.
+// Carrega o dossiê inteiro. Com o cliente do usuário, as regras do banco (RLS) garantem que só vem o que ele pode ver:
+// sem consentimento ativo, o paciente nem aparece e a função devolve null.
 export async function carregarDossie(sb: SupabaseClient, pacienteId: string): Promise<Dossie | null> {
   const { data: paciente } = await sb.from('pacientes').select('*').eq('id', pacienteId).maybeSingle()
   if (!paciente) return null
   const [at, co, me, al, ex, dc] = await Promise.all([
-    sb.from('atendimentos').select(`id,data,tipo,queixa,hipotese,conduta,origem,${ORG},${PROF}`).eq('paciente_id', pacienteId).order('data', { ascending: false }),
+    sb.from('atendimentos').select(`id,data,tipo,rede,operadora,queixa,hipotese,conduta,origem,${ORG},${PROF}`).eq('paciente_id', pacienteId).order('data', { ascending: false }),
     sb.from('condicoes').select('*').eq('paciente_id', pacienteId).order('inicio', { ascending: false }),
     sb.from('medicamentos').select(`*,${PROF}`).eq('paciente_id', pacienteId).order('inicio', { ascending: false }),
     sb.from('alergias').select('*').eq('paciente_id', pacienteId),

@@ -16,7 +16,7 @@ export default async function DossiePaciente({ params, searchParams }: { params:
   const sb = await supabaseServidor()
   const d = await carregarDossie(sb, id)
   if (!d) notFound()
-  const { data: acessos } = await sb.from('acessos').select('id,quem,organizacao,acao,em').eq('paciente_id', id).order('em', { ascending: false }).limit(10)
+  const { data: acessos } = await sb.from('acessos').select('id,ator_nome,organizacao_nome,acao,em').eq('paciente_id', id).order('em', { ascending: false }).limit(10)
   const { data: { user } } = await sb.auth.getUser()
   const alertas = calcularAlertas(d)
   const base = `/app/p/${id}`

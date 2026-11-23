@@ -6,22 +6,22 @@ import { dataBR } from '@/lib/formato'
 import { retrato, iniciais } from '@/lib/retratos'
 import s from './Jornada.module.css'
 
-// Rede de cada unidade (na demonstração, pelo tipo; no banco v2 vira campo próprio).
-export function redeDe(tipo?: string): { rotulo: string; classe: string } {
-  if (tipo === 'ubs' || tipo === 'upa') return { rotulo: 'SUS', classe: s.sus }
-  if (tipo === 'laboratorio') return { rotulo: 'Convênio', classe: s.conv }
+// Rede de cada passo: no atendimento vem do registro (SUS, particular ou convênio); no exame, da unidade.
+export function redeDe(rede?: string): { rotulo: string; classe: string } {
+  if (rede === 'sus' || rede === 'publica') return { rotulo: 'SUS', classe: s.sus }
+  if (rede === 'convenio') return { rotulo: 'Convênio', classe: s.conv }
   return { rotulo: 'Particular', classe: s.part }
 }
 const ICONE: Record<string, typeof Hospital> = { ubs: Building2, upa: Hospital, laboratorio: FlaskConical, clinica: Stethoscope, consultorio: Stethoscope }
 
-type Passo = { id: string; quando: string; onde: string; tipo?: string; o_que: string; detalhe?: string; alerta?: boolean }
+type Passo = { id: string; quando: string; onde: string; tipo?: string; rede?: string; o_que: string; detalhe?: string; alerta?: boolean }
 
 // Peça-assinatura do Elo: o caminho do paciente por todos os lugares, com a rede e o ponto onde algo não combina.
 export function Jornada({ d, alertas, hora, clinica, href }: { d: Dossie; alertas: Alerta[]; hora: string; clinica: string; href?: string }) {
   const divergente = new Set(alertas.filter((a) => a.tipo === 'divergencia').flatMap((a) => a.id.replace('div-', '').split(/-(?=[0-9a-f]{8}-)/)))
   const passos: Passo[] = [
-    ...d.atendimentos.map((a) => ({ id: a.id, quando: a.data, onde: a.organizacoes?.nome ?? 'Local não informado', tipo: a.organizacoes?.tipo, o_que: a.hipotese ?? a.queixa ?? 'Atendimento', detalhe: a.profissionais?.nome, alerta: divergente.has(a.id) })),
-    ...d.exames.filter((e) => e.resultado_em).map((e) => ({ id: e.id, quando: e.resultado_em + 'T18:00:00-03:00', onde: e.organizacoes?.nome ?? 'Laboratório', tipo: e.organizacoes?.tipo, o_que: `${e.nome}${e.alterado ? ' alterado' : ''}`, detalhe: e.resultado ?? undefined })),
+    ...d.atendimentos.map((a) => ({ id: a.id, quando: a.data, onde: a.organizacoes?.nome ?? 'Local não informado', tipo: a.organizacoes?.tipo, rede: a.rede, o_que: a.hipotese ?? a.queixa ?? 'Atendimento', detalhe: a.profissionais?.nome, alerta: divergente.has(a.id) })),
+    ...d.exames.filter((e) => e.resultado_em).map((e) => ({ id: e.id, quando: e.resultado_em + 'T18:00:00-03:00', onde: e.organizacoes?.nome ?? 'Laboratório', tipo: e.organizacoes?.tipo, rede: e.organizacoes?.rede, o_que: `${e.nome}${e.alterado ? ' alterado' : ''}`, detalhe: e.resultado ?? undefined })),
   ].sort((a, b) => (a.quando < b.quando ? -1 : 1)).slice(-5)
   const principal = alertas[0]
   return (
@@ -35,7 +35,7 @@ export function Jornada({ d, alertas, hora, clinica, href }: { d: Dossie; alerta
       </header>
       <ol className={s.trilho}>
         {passos.map((p) => {
-          const r = redeDe(p.tipo); const Ic = ICONE[p.tipo ?? ''] ?? Stethoscope
+          const r = redeDe(p.rede); const Ic = ICONE[p.tipo ?? ''] ?? Stethoscope
           return (
             <li key={p.id} className={`${s.passo} ${p.alerta ? s.passoAlerta : ''}`}>
               <span className={`${s.no} ${r.classe}`} aria-hidden="true"><Ic size={18} /></span>

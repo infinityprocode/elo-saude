@@ -5,14 +5,12 @@ import { Tracos } from '@/components/graficos/Tracos'
 import { Barras } from '@/components/graficos/Barras'
 import { Assistente } from '@/components/clinica/Assistente'
 import { Jornada } from '@/components/clinica/Jornada'
-import { exigirProfissional, pacientesDaClinica, dossieParaClinica, acessosRecentes } from '@/lib/profissional'
-import { supabaseAdmin } from '@/lib/supabase/admin'
+import { exigirProfissional, dossiesDaOrg, meusAcessos, agendaDoDia, equipeDaOrg } from '@/lib/profissional'
 import { calcularAlertas } from '@/lib/alertas'
 import { resumirPaciente } from '@/lib/resumo'
-import { indicadores, agendaHoje, hojeSP } from '@/lib/clinica-demo'
+import { indicadores, hojeSP } from '@/lib/clinica-demo'
 import { retrato, iniciais } from '@/lib/retratos'
 import { dataBR, idade } from '@/lib/formato'
-import type { Dossie } from '@/lib/dossie'
 import { navClinica } from './nav'
 import s from './clinica.module.css'
 
@@ -37,22 +35,20 @@ export default async function PainelClinica({ searchParams }: { searchParams: Pr
   const { q = '', p: filtroProf = '' } = await searchParams
   const busca = sem(q.trim())
   const casa = (t: string) => !busca || sem(t).includes(busca)
-  const prof = await exigirProfissional()
-  const org = prof.organizacoes
-  const { data: equipe } = await supabaseAdmin().from('profissionais').select('id,nome,especialidade').eq('organizacao_id', prof.organizacao_id).order('nome')
-
-  const ids = await pacientesDaClinica(prof.organizacao_id)
-  const dossies = (await Promise.all(ids.map((id) => dossieParaClinica(prof.organizacao_id, id)))).filter(Boolean) as Dossie[]
+  // tudo lido com a sessão da profissional: o banco só entrega o que o consentimento libera
+  const { sb, prof } = await exigirProfissional()
+  const org = prof.orgs[0]
+  if (!org) return <p style={{ padding: 32 }}>Você ainda não está vinculado a uma clínica.</p>
+  const [equipe, dossies, agendaToda] = await Promise.all([equipeDaOrg(sb, org.id), dossiesDaOrg(sb, org.id), agendaDoDia(sb, org.id)])
   const comAlertas = dossies.map((d) => ({ d, alertas: calcularAlertas(d) })).sort((a, b) => b.alertas.filter((x) => x.gravidade === 'alta').length - a.alertas.filter((x) => x.gravidade === 'alta').length)
   const todos = comAlertas.flatMap((x) => x.alertas)
   const altos = todos.filter((a) => a.gravidade === 'alta').length
   const resumos = comAlertas.map(({ d }) => resumirPaciente(d))
   const alertasPorPac = new Map(comAlertas.map((x) => [x.d.paciente.id, x.alertas]))
-  const { serie } = indicadores()
-  const agendaToda = agendaHoje()
-  const profSel = (equipe ?? []).find((e) => e.id === filtroProf)
-  const agenda = agendaToda.filter((c) => (!profSel || c.profissional === profSel.nome) && casa(`${c.nome} ${c.detalhe}`))
-  const acessos = await acessosRecentes(ids)
+  const { serie } = indicadores(agendaToda.length)
+  const profSel = equipe.find((e) => e.id === filtroProf)
+  const agenda = agendaToda.filter((c) => (!profSel || c.profissionalId === profSel.id) && casa(`${c.nome} ${c.detalhe}`))
+  const acessos = await meusAcessos(sb)
   const nomePac = new Map(dossies.map((d) => [d.paciente.id, d.paciente.nome]))
 
   const confirmadas = agenda.filter((c) => c.status === 'confirmado' || c.status === 'atendido').length
@@ -63,8 +59,8 @@ export default async function PainelClinica({ searchParams }: { searchParams: Pr
   const sabados = serie.filter((p) => new Date(p.data + 'T12:00:00-03:00').getDay() === 6)
 
   const chegou = dossies.flatMap((d) => [
-    ...d.exames.filter((e) => e.resultado_em).map((e) => ({ id: e.id, quando: e.resultado_em!, titulo: `Resultado: ${e.nome}`, quem: d.paciente.nome, pid: d.paciente.id, origem: e.origem, de: e.organizacoes?.nome ?? '', rede: e.organizacoes?.tipo })),
-    ...d.atendimentos.filter((a) => a.origem !== 'profissional').map((a) => ({ id: a.id, quando: a.data, titulo: `Atendimento: ${a.hipotese ?? a.tipo}`, quem: d.paciente.nome, pid: d.paciente.id, origem: a.origem, de: a.organizacoes?.nome ?? '', rede: a.organizacoes?.tipo })),
+    ...d.exames.filter((e) => e.resultado_em).map((e) => ({ id: e.id, quando: e.resultado_em!, titulo: `Resultado: ${e.nome}`, quem: d.paciente.nome, pid: d.paciente.id, origem: e.origem, de: e.organizacoes?.nome ?? '', rede: e.organizacoes?.rede })),
+    ...d.atendimentos.filter((a) => a.origem !== 'profissional').map((a) => ({ id: a.id, quando: a.data, titulo: `Atendimento: ${a.hipotese ?? a.tipo}`, quem: d.paciente.nome, pid: d.paciente.id, origem: a.origem, de: a.organizacoes?.nome ?? '', rede: a.rede })),
   ].filter((c) => casa(`${c.quem} ${c.titulo}`))).sort((a, b) => (a.quando < b.quando ? 1 : -1)).slice(0, 6)
 
   const fontes = new Map<string, number>()
@@ -84,7 +80,7 @@ export default async function PainelClinica({ searchParams }: { searchParams: Pr
   const focoAl = foco ? alertasPorPac.get(foco.pacienteId!) ?? [] : []
   const briefing = comAlertaHoje.map((c) => { const al = (alertasPorPac.get(c.pacienteId!) ?? [])[0]; return `${c.hora} · ${c.nome}: ${al?.titulo ?? ''}` })
 
-  const confirmadasDe = (nome?: string) => { const l = agendaToda.filter((c) => !nome || c.profissional === nome); return pct(l.filter((c) => c.status === 'confirmado' || c.status === 'atendido').length, l.length) }
+  const confirmadasDe = (id?: string) => { const l = agendaToda.filter((c) => !id || c.profissionalId === id); return pct(l.filter((c) => c.status === 'confirmado' || c.status === 'atendido').length, l.length) }
 
   return (
     <Moldura nav={navClinica(todos.length)} ativo="painel" alertas={todos.length} perguntar="#assistente"
@@ -98,7 +94,7 @@ export default async function PainelClinica({ searchParams }: { searchParams: Pr
           </div>
           <div className={s.chips}>
             <span className={s.chip}>Unidade: <strong>{org.nome}</strong></span>
-            <span className={s.chip}>Equipe: <strong>{(equipe ?? []).length} profissionais</strong></span>
+            <span className={s.chip}>Equipe: <strong>{equipe.length} profissionais</strong></span>
             <span className={s.chip}>Integração: <strong className={s.verde}>Ativa</strong></span>
             <span className={s.selo}>Dados fictícios de demonstração</span>
           </div>
@@ -113,9 +109,9 @@ export default async function PainelClinica({ searchParams }: { searchParams: Pr
       }
       abas={<>
         <Aba on={!profSel} href="/clinica" Icone={LayoutGrid} titulo="Toda a clínica" sub={`${agendaToda.length} consultas hoje`} destaque={<><span>Confirmadas hoje</span><strong className="num">{br(confirmadasDe())}%</strong><CheckCircle2 size={16} color="var(--ok)" aria-hidden="true" /></>} />
-        {(equipe ?? []).map((e) => (
-          <Aba key={e.id} on={profSel?.id === e.id} href={`/clinica?p=${e.id}`} Icone={e.especialidade?.startsWith('Orto') ? Stethoscope : UserRound} titulo={e.nome} sub={`${e.especialidade} · ${agendaToda.filter((c) => c.profissional === e.nome).length} hoje`}
-            destaque={<><span>Confirmadas hoje</span><strong className="num">{br(confirmadasDe(e.nome))}%</strong><CheckCircle2 size={16} color="var(--ok)" aria-hidden="true" /></>} />
+        {equipe.map((e) => (
+          <Aba key={e.id} on={profSel?.id === e.id} href={`/clinica?p=${e.id}`} Icone={e.especialidade?.startsWith('Orto') ? Stethoscope : UserRound} titulo={e.nome} sub={`${e.especialidade} · ${agendaToda.filter((c) => c.profissionalId === e.id).length} hoje`}
+            destaque={<><span>Confirmadas hoje</span><strong className="num">{br(confirmadasDe(e.id))}%</strong><CheckCircle2 size={16} color="var(--ok)" aria-hidden="true" /></>} />
         ))}
         <Aba href="/clinica#integracoes" Icone={Network} titulo="Rede conectada" sub={`${fontes.size} unidades de origem`} />
       </>}>
@@ -214,10 +210,10 @@ export default async function PainelClinica({ searchParams }: { searchParams: Pr
               <li key={o}><span>{o}</span><span className={s.barraF}><span style={{ width: `${(n / Math.max(totalFhir, 1)) * 100}%` }} /></span><strong className="num">{n}</strong></li>
             ))}
           </ul>
-          <h3 className={s.sub}>Quem abriu os dossiês</h3>
+          <h3 className={s.sub}>Seus acessos registrados</h3>
           <ul className={s.acessos}>
             {acessos.map((a) => (
-              <li key={a.id}><Foto nome={a.quem} tam={30} /><span><strong>{a.quem}</strong> {a.acao === 'registrou_atendimento' ? 'registrou atendimento de' : 'abriu o dossiê de'} {nomePac.get(a.paciente_id)}</span><time className="num">{dataBR(a.em).slice(0, 5)}</time></li>
+              <li key={a.id}><Foto nome={a.ator_nome} tam={30} /><span><strong>{a.ator_nome}</strong> {a.acao === 'registrou_atendimento' ? 'registrou atendimento de' : 'abriu o dossiê de'} {nomePac.get(a.paciente_id) ?? 'um paciente'}</span><time className="num">{dataBR(a.em).slice(0, 5)}</time></li>
             ))}
           </ul>
         </section>

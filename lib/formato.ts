@@ -32,3 +32,11 @@ export const TIPO_ATENDIMENTO: Record<string, string> = {
 export const TIPO_ORG: Record<string, string> = {
   ubs: 'UBS', upa: 'UPA', clinica: 'Clínica', hospital: 'Hospital', laboratorio: 'Laboratório', consultorio: 'Consultório',
 }
+
+export const registroProf = (p: { conselho: string; numero: string; uf: string }) => `${p.conselho} ${p.numero}-${p.uf}`
+
+export const REDE: Record<string, { rotulo: string; classe: string }> = {
+  sus: { rotulo: 'SUS', classe: 'rede-sus' },
+  particular: { rotulo: 'Particular', classe: 'rede-part' },
+  convenio: { rotulo: 'Convênio', classe: 'rede-conv' },
+}

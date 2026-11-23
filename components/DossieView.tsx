@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { CalendarClock, Droplet, FlaskConical, MapPin, Phone, Pill, Scale, ShieldAlert, Stethoscope, TriangleAlert } from 'lucide-react'
 import { emUso, linhaDoTempo, type Dossie, type ItemLinha } from '@/lib/dossie'
 import type { Alerta } from '@/lib/alertas'
-import { dataBR, horaBR, idade, ORIGEM, TIPO_ATENDIMENTO, TIPO_ORG } from '@/lib/formato'
+import { dataBR, horaBR, idade, ORIGEM, REDE, TIPO_ATENDIMENTO, TIPO_ORG, registroProf } from '@/lib/formato'
 import s from './DossieView.module.css'
 
 const FILTROS = [
@@ -24,7 +24,7 @@ function passa(item: ItemLinha, f: string) {
   return true
 }
 
-type Acesso = { id: string; quem: string; organizacao: string | null; acao: string; em: string }
+type Acesso = { id: string | number; ator_nome: string; organizacao_nome: string | null; acao: string; em: string }
 
 // Dossiê do paciente. Mesmo componente para o paciente (visão própria) e para o profissional (com alertas no topo).
 export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], modo = 'paciente', base, cabecalho = true }: { d: Dossie; f?: string; alertas?: Alerta[]; acessos?: Acesso[]; modo?: 'paciente' | 'profissional'; base: string; cabecalho?: boolean }) {
@@ -111,9 +111,9 @@ export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], modo = '
                 <li key={`a-${a.id}`} className={s.item}>
                   <span className={`${s.ponto} ${s.pAt}`} aria-hidden="true"><Stethoscope size={15} /></span>
                   <article className={`card ${s.cartao}`}>
-                    <div className={s.cTopo}><time className="mono">{dataBR(a.data)} · {horaBR(a.data)}</time><Origem o={a.origem} /></div>
+                    <div className={s.cTopo}><time className="mono">{dataBR(a.data)} · {horaBR(a.data)}</time><span className={s.tags}><span className={`pill ${REDE[a.rede]?.classe}`}>{REDE[a.rede]?.rotulo}{a.operadora ? ` · ${a.operadora}` : ''}</span><Origem o={a.origem} /></span></div>
                     <h3><span className={s.tipo}>{TIPO_ATENDIMENTO[a.tipo] ?? a.tipo}</span>{a.organizacoes?.nome ?? 'Local não informado'}</h3>
-                    <p className={s.meta}>{a.profissionais ? `${a.profissionais.nome} · ${a.profissionais.especialidade ?? ''} · ${a.profissionais.conselho} ${a.profissionais.registro}` : 'Profissional não informado'}{a.organizacoes ? ` · ${TIPO_ORG[a.organizacoes.tipo]} em ${a.organizacoes.cidade}` : ''}</p>
+                    <p className={s.meta}>{a.profissionais ? `${a.profissionais.nome} · ${a.profissionais.especialidade ?? ''} · ${registroProf(a.profissionais)}` : 'Profissional não informado'}{a.organizacoes ? ` · ${TIPO_ORG[a.organizacoes.tipo]} em ${a.organizacoes.cidade}` : ''}</p>
                     <dl className={s.campos}>
                       {a.queixa && <><dt>Queixa</dt><dd>{a.queixa}</dd></>}
                       {a.hipotese && <><dt>Hipótese</dt><dd><strong>{a.hipotese}</strong></dd></>}
@@ -162,7 +162,7 @@ export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], modo = '
         <section className={`card ${s.acessos}`} id="acessos" aria-labelledby="t-acessos">
           <h2 id="t-acessos">Quem abriu este dossiê</h2>
           <ul>{acessos.map((a) => (
-            <li key={a.id}><span className={s.aPonto} aria-hidden="true" /><span><strong>{a.quem}</strong>{a.organizacao ? `, ${a.organizacao},` : ''} {a.acao === 'registrou_atendimento' ? 'registrou um atendimento' : a.acao === 'acesso_emergencia' ? 'usou o acesso de emergência' : 'abriu o dossiê'}</span><time className="mono">{dataBR(a.em)} · {horaBR(a.em)}</time></li>
+            <li key={a.id}><span className={s.aPonto} aria-hidden="true" /><span><strong>{a.ator_nome}</strong>{a.organizacao_nome ? `, ${a.organizacao_nome},` : ''} {({ registrou_atendimento: 'registrou um atendimento', acesso_emergencia: 'usou o acesso de emergência', revogou: 'revogou um consentimento', consentiu: 'deu um consentimento', registrou_adendo: 'registrou um adendo' } as Record<string, string>)[a.acao] ?? 'abriu o dossiê'}</span><time className="mono">{dataBR(a.em)} · {horaBR(a.em)}</time></li>
           ))}</ul>
         </section>
       )}
