@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
 import { Bell, Search, Sparkles } from 'lucide-react'
-import { Simbolo } from '@/components/Marca'
+import { Marca } from '@/components/Marca'
 import s from './Moldura.module.css'
 
 export type ItemNav = { k: string; href: string; rotulo: string; curto?: string; Icone: LucideIcon; badge?: number }
@@ -19,7 +19,7 @@ export function Moldura({ nav, ativo, usuario, alertas = 0, perguntar, faixa, ab
         <div className={s.faixa}>
           <div className={s.arte} aria-hidden="true" />
           <header className={s.barra}>
-            <Link href={nav[0].href} className={s.logo} aria-label="Elo Saúde, início"><Simbolo tamanho={40} /><span>Elo Saúde</span></Link>
+            <Link href={nav[0].href} className={s.logo} aria-label="Elo Saúde, início"><Marca tamanho={40} /></Link>
             <nav className={s.pilula} aria-label="Menu principal">
               {nav.map(({ k, href, rotulo, Icone, badge }) => (
                 <Link key={k} href={href} className={k === ativo ? s.on : ''} aria-current={k === ativo ? 'page' : undefined} title={rotulo}>

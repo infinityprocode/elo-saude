@@ -1,4 +1,4 @@
-.caixa { padding: 24px; display: grid; gap: 20px; border-radius: 28px; overflow: hidden; position: relative; background: linear-gradient(180deg, #fbfdff 0%, #f5f9ff 100%); }
+.caixa { padding: 24px; display: grid; gap: 20px; border-radius: 28px; overflow: hidden; min-width: 0; position: relative; background: linear-gradient(180deg, #fbfdff 0%, #f5f9ff 100%); }
 .topo { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
 .quem { display: flex; align-items: center; gap: 14px; }
 .foto, .ini { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 3px var(--surface), 0 6px 16px -6px rgba(13, 37, 84, .5); }
@@ -34,4 +34,4 @@
 .abrir { grid-column: 2; justify-self: start; font-weight: 700; color: var(--crit); font-size: 13.5px; }
 .achado:hover { border-color: var(--crit-400); }
 @media (min-width: 760px) { .achado { grid-template-columns: 40px minmax(0, 1fr) auto; } .abrir { grid-column: auto; } }
-@media (min-width: 1024px) { .trilho { overflow: visible; } }
+@media (min-width: 1024px) { .trilho { grid-auto-columns: minmax(140px, 1fr); } }

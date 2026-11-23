@@ -17,7 +17,7 @@ const ICONE: Record<string, typeof Hospital> = { ubs: Building2, upa: Hospital, 
 type Passo = { id: string; quando: string; onde: string; tipo?: string; o_que: string; detalhe?: string; alerta?: boolean }
 
 // Peça-assinatura do Elo: o caminho do paciente por todos os lugares, com a rede e o ponto onde algo não combina.
-export function Jornada({ d, alertas, hora, clinica }: { d: Dossie; alertas: Alerta[]; hora: string; clinica: string }) {
+export function Jornada({ d, alertas, hora, clinica, href }: { d: Dossie; alertas: Alerta[]; hora: string; clinica: string; href?: string }) {
   const divergente = new Set(alertas.filter((a) => a.tipo === 'divergencia').flatMap((a) => a.id.replace('div-', '').split(/-(?=[0-9a-f]{8}-)/)))
   const passos: Passo[] = [
     ...d.atendimentos.map((a) => ({ id: a.id, quando: a.data, onde: a.organizacoes?.nome ?? 'Local não informado', tipo: a.organizacoes?.tipo, o_que: a.hipotese ?? a.queixa ?? 'Atendimento', detalhe: a.profissionais?.nome, alerta: divergente.has(a.id) })),
@@ -56,10 +56,10 @@ export function Jornada({ d, alertas, hora, clinica }: { d: Dossie; alertas: Ale
         </li>
       </ol>
       {principal && (
-        <Link href={`/clinica/p/${d.paciente.id}`} className={s.achado}>
+        <Link href={href ?? `/clinica/p/${d.paciente.id}`} className={s.achado}>
           <span className={s.achadoIco} aria-hidden="true"><TriangleAlert size={18} /></span>
           <span><strong>{principal.titulo}.</strong> {principal.detalhe}</span>
-          <span className={s.abrir}>Abrir dossiê</span>
+          <span className={s.abrir}>{href ? 'Ver na demonstração' : 'Abrir dossiê'}</span>
         </Link>
       )}
     </section>
