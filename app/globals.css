@@ -1,0 +1,56 @@
+/* Elo Saúde · tokens. Azul clínico claro, superfícies brancas, tinta azul-marinho.
+   Layout: celular primeiro; no computador o conteúdo vira duas colunas. */
+:root {
+  --bg: #f3f7fc;
+  --surface: #ffffff;
+  --surface-2: #f7faff;
+  --ink: #0e1c33;
+  --ink-2: #3d4d66;
+  --muted: #6b7a93;
+  --line: #dde6f2;
+  --accent: #1667d9;
+  --accent-ink: #ffffff;
+  --accent-soft: #e5effd;
+  --good: #11795a;
+  --good-soft: #e3f5ee;
+  --warn: #9a5b00;
+  --warn-soft: #fdf1dc;
+  --crit: #b4282b;
+  --crit-soft: #fde8e8;
+  --fhir: #5b4bb7;
+  --fhir-soft: #eeebfb;
+  --radius: 16px;
+  --shadow: 0 1px 2px rgba(14, 28, 51, .05), 0 6px 20px rgba(22, 103, 217, .06);
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b1322; --surface: #111c30; --surface-2: #15223a; --ink: #e8eef8; --ink-2: #b9c6da; --muted: #8796ae;
+    --line: #22324d; --accent: #5b9bff; --accent-ink: #08111f; --accent-soft: #16294a; --good: #4cc39a; --good-soft: #12302a;
+    --warn: #f0b252; --warn-soft: #33270f; --crit: #ff7b7b; --crit-soft: #3a1618; --fhir: #a99bff; --fhir-soft: #221d43;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3); color-scheme: dark;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-sans); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); }
+h1, h2, h3 { line-height: 1.15; text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+button, input, select { font: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+.mono { font-family: var(--font-mono), ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 18px; border-radius: 12px; border: 1px solid transparent; font-weight: 600; cursor: pointer; text-decoration: none; }
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-ghost { background: transparent; color: var(--ink-2); border-color: var(--line); }
+.btn-primary:hover { filter: brightness(1.05); }
+.eyebrow { font-family: var(--font-mono), monospace; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+.or-foto { background: var(--accent-soft); color: var(--accent); }
+.or-prof { background: var(--good-soft); color: var(--good); }
+.or-fhir { background: var(--fhir-soft); color: var(--fhir); }
+.or-manual { background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
+.aviso-demo { font-size: 12.5px; color: var(--warn); background: var(--warn-soft); border-radius: 10px; padding: 8px 12px; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
