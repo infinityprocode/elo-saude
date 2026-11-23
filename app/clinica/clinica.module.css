@@ -5,12 +5,12 @@
 .faixa h1 { font-size: clamp(42px, 7vw, 88px); font-weight: 300; letter-spacing: -0.045em; line-height: 1; color: #0f2a52; }
 .faixa p { font-size: 16px; color: var(--ink-2); max-width: 44ch; line-height: 1.5; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.chip { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 16px; border-radius: 999px; background: rgba(251, 253, 255, .78); border: 1px solid rgba(255, 255, 255, .9); font-size: 14px; color: var(--ink-3); box-shadow: 0 6px 16px -12px rgba(13, 37, 84, .35); }
+.chip { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 999px; background: rgba(251, 253, 255, .78); border: 1px solid rgba(255, 255, 255, .9); font-size: 14px; color: var(--ink-3); box-shadow: 0 6px 16px -12px rgba(13, 37, 84, .35); }
 .chip strong { color: var(--ink); font-weight: 600; }
 .verde { color: var(--ok) !important; background: var(--ok-100); padding: 3px 10px; border-radius: 999px; }
 .selo { font-size: 12px; font-weight: 600; color: var(--warn); background: rgba(253, 238, 211, .92); border-radius: 999px; padding: 5px 12px; }
 
-.grade { display: grid; gap: 16px; }
+.grade { display: grid; gap: 16px; align-items: start; }
 .grade > * { min-width: 0; }
 .busca input { width: 100%; height: 48px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' stroke='%236a7894' stroke-width='2' stroke-linecap='round' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") no-repeat 18px center; padding: 0 18px 0 46px; font-size: 16px; outline: none; box-shadow: var(--shadow-1); }
 .busca input:focus { border-color: var(--cobalt-200); box-shadow: var(--ring); }
@@ -26,6 +26,7 @@ a.seta:hover { background: var(--ink); color: #eef4ff; border-color: var(--ink);
 .kpiNum { display: flex; align-items: center; gap: 10px; margin: 18px 0 14px; }
 .kpiNum strong { font-size: clamp(44px, 5vw, 58px); font-weight: 300; letter-spacing: -0.04em; line-height: 1; }
 
+.jornada { min-width: 0; }
 .assist { display: grid; }
 .assist > * { min-width: 0; }
 
@@ -35,8 +36,8 @@ a.seta:hover { background: var(--ink); color: #eef4ff; border-color: var(--ink);
 .mini { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 20px; margin: 0; }
 .mini div { display: grid; }
 .mini dt { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; }
-.mini dd { margin: 0; font-size: 12.5px; color: var(--ink-3); }
-.legenda { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: 12px; color: var(--ink-3); margin-top: 6px; }
+.mini dd { margin: 0; font-size: 13px; color: var(--ink-3); }
+.legenda { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: 13px; color: var(--ink-3); margin-top: 6px; }
 .legenda span { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: -8px; }
 .lVerde { background: #3fb57f; } .lAmbar { background: #f0b252; } .lCinza { background: #d6dfeb; }
 
@@ -66,8 +67,9 @@ a.consulta:hover { background: var(--surface-2); }
 .pMedia { background: var(--warn-100); border-color: var(--warn-400); }
 
 .fontes { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 12px; }
-.fontes li { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) 24px; gap: 12px; align-items: center; font-size: 13.5px; }
-.fontes li > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fontes li { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 24px; gap: 12px; align-items: center; font-size: 13.5px; }
+.barraF { height: 10px; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
+.barraF span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--cobalt-400), var(--cobalt-600)); }
 .fontes strong { text-align: right; }
 .vivo { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); animation: vivo 2.4s var(--ease) infinite; }
 @keyframes vivo { 0% { box-shadow: 0 0 0 0 rgba(19, 138, 94, .5); } 70%, 100% { box-shadow: 0 0 0 7px rgba(19, 138, 94, 0); } }
@@ -90,7 +92,7 @@ a.consulta:hover { background: var(--surface-2); }
 .feedFim time { font-size: 12.5px; color: var(--ink-3); }
 
 /* celular: o que importa primeiro */
-.busca { order: 0; } .kpi { order: 1; } .agenda { order: 2; } .antes { order: 3; } .assist { order: 4; } .fluxo { order: 5; } .chegou { order: 6; } .integ { order: 7; }
+.busca { order: 0; } .kpi { order: 1; } .jornada { order: 1; } .agenda { order: 2; } .antes { order: 3; } .fluxo { order: 4; } .assist { order: 5; } .chegou { order: 6; } .integ { order: 7; }
 
 @media (min-width: 640px) {
   .mini { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -127,3 +129,23 @@ a.consulta:hover { background: var(--surface-2); }
   .fluxoTopo { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .mini { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* cartão de vidro sobre a ilustração: o alerta real do dia */
+.faixa { position: relative; }
+.vidro { justify-self: start; display: grid; grid-template-columns: 44px minmax(0, 1fr) 32px; gap: 12px; align-items: center; padding: 10px 12px 10px 10px; border-radius: 22px; background: rgba(251, 253, 255, .82); border: 1px solid rgba(255, 255, 255, .95); box-shadow: 0 18px 40px -20px rgba(13, 37, 84, .55); color: var(--ink); max-width: 400px; }
+.vidroTxt { display: grid; line-height: 1.3; min-width: 0; }
+.vidroTxt small { font-size: 12.5px; color: var(--ink-3); }
+.vidroTxt strong { font-size: 15px; font-weight: 600; }
+.vidroAl { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--crit); color: #fff8f7; animation: pulsa 2.4s var(--ease) infinite; }
+@keyframes pulsa { 0% { box-shadow: 0 0 0 0 rgba(195, 53, 47, .45); } 70%, 100% { box-shadow: 0 0 0 10px rgba(195, 53, 47, 0); } }
+@media (min-width: 1024px) {
+  .vidro { position: absolute; right: 2%; bottom: 8px; }
+  .jornada { grid-column: 1 / -1; }
+}
+@media (min-width: 1360px) {
+  .jornada { grid-column: span 9; }
+  .assist { grid-row: span 3; }
+  .vidro { right: 4%; bottom: 0; }
+  .assist { position: sticky; top: 24px; align-self: start; }
+}
+@media (prefers-reduced-motion: reduce) { .vidroAl { animation: none; } }

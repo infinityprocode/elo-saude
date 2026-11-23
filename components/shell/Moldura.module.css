@@ -22,14 +22,14 @@
 .conteudoFaixa { position: relative; z-index: 2; padding-block: 132px 22px; }
 
 /* abas que encaixam */
-.abas { position: relative; z-index: 2; display: flex; gap: 10px; overflow-x: auto; padding: 0 0 0; margin: 0 calc(-1 * max(16px, env(safe-area-inset-right))) 0 calc(-1 * max(16px, env(safe-area-inset-left))); padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right)); scrollbar-width: none; scroll-snap-type: x mandatory; }
+.abas { position: relative; z-index: 2; display: flex; gap: 10px; overflow-x: auto; -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); padding: 0 0 0; margin: 0 calc(-1 * max(16px, env(safe-area-inset-right))) 0 calc(-1 * max(16px, env(safe-area-inset-left))); padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right)); scrollbar-width: none; scroll-snap-type: x mandatory; }
 .abas::-webkit-scrollbar { display: none; }
 .aba { flex: 0 0 auto; scroll-snap-align: start; display: grid; grid-template-columns: 40px auto; gap: 4px 12px; align-items: center; min-width: 200px; padding: 14px 16px 30px; border-radius: 22px 22px 0 0; background: rgba(251, 253, 255, .42); border: 1px solid rgba(255, 255, 255, .7); border-bottom: 0; color: var(--ink); transform: translateY(16px); transition: background .2s var(--ease), transform .2s var(--ease); }
 .aba:hover { background: rgba(251, 253, 255, .65); }
 .abaIco { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: rgba(251, 253, 255, .8); color: var(--ink-2); border: 1px solid rgba(255, 255, 255, .9); }
 .abaTxt { display: grid; line-height: 1.25; }
 .abaTxt strong { font-size: 15.5px; font-weight: 600; }
-.abaTxt small { font-size: 12.5px; color: var(--ink-3); }
+.abaTxt small { font-size: 13px; color: var(--ink-2); }
 .abaOn { background: var(--page); border-color: var(--page); transform: none; padding-bottom: 18px; box-shadow: 0 -10px 30px -18px rgba(13, 37, 84, .35); }
 .abaOn:hover { background: var(--page); }
 .abaOn .abaIco { background: linear-gradient(150deg, var(--cobalt-400), var(--cobalt-600)); color: #f8fbff; border-color: transparent; box-shadow: 0 8px 16px -8px rgba(31, 91, 214, .8); }
@@ -62,13 +62,13 @@
   .pilula a { position: relative; display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 14px; border-radius: 999px; color: var(--ink-2); font-weight: 600; font-size: 15px; transition: background .2s var(--ease); }
   .pilula a:hover { background: rgba(251, 253, 255, .6); }
   .pilula a.on { background: var(--surface); color: var(--ink); padding: 0 20px; box-shadow: 0 6px 16px -10px rgba(13, 37, 84, .4); }
-  .pilula em { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; font-size: 0; background: var(--crit); }
+  .pilula em { position: absolute; top: 2px; right: 0; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; font-style: normal; font-size: 10.5px; font-weight: 700; display: grid; place-items: center; background: var(--crit); color: #fff8f7; border: 2px solid #eef4fb; }
   .redondo:first-child { display: grid; }
   .perguntar { display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 18px; border-radius: 999px; background: var(--surface); color: var(--ink); font-weight: 600; font-size: 15px; box-shadow: 0 6px 16px -10px rgba(13, 37, 84, .4); }
   .perguntar svg { color: var(--cobalt-500); }
   .avatar { width: 50px; height: 50px; }
   .conteudoFaixa { padding-block: 44px 40px; }
-  .abas { margin: 0; padding: 0; overflow: visible; gap: 14px; }
+  .abas { margin: 0; padding: 0; overflow: visible; gap: 14px; -webkit-mask-image: none; mask-image: none; }
   .aba { flex: 1 1 0; min-width: 0; }
   .painel { border-radius: 40px 40px 0 0; padding: 32px 44px 40px; margin-top: -6px; }
   .inferior { display: none; }

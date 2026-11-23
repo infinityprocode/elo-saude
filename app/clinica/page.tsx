@@ -4,6 +4,7 @@ import { Moldura, Aba } from '@/components/shell/Moldura'
 import { Tracos } from '@/components/graficos/Tracos'
 import { Barras } from '@/components/graficos/Barras'
 import { Assistente } from '@/components/clinica/Assistente'
+import { Jornada } from '@/components/clinica/Jornada'
 import { exigirProfissional, pacientesDaClinica, dossieParaClinica, acessosRecentes } from '@/lib/profissional'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { calcularAlertas } from '@/lib/alertas'
@@ -77,9 +78,13 @@ export default async function PainelClinica({ searchParams }: { searchParams: Pr
   const primeiro = prof.nome.replace(/^Dra?\.\s*/, '').split(' ')[0]
   const titulo = prof.nome.startsWith('Dra') ? 'Dra.' : 'Dr.'
   const comAlertaHoje = agendaToda.filter((c) => c.pacienteId && (alertasPorPac.get(c.pacienteId) ?? []).some((a) => a.gravidade === 'alta'))
-  const saudacao = `${ola}, ${titulo} ${primeiro}. ${comAlertaHoje.length ? `${comAlertaHoje.length} pacientes da agenda de hoje têm alertas altos: ${comAlertaHoje.map((c) => `${c.nome.split(' ')[0]} (${c.hora})`).join(' e ')}. Quer começar por qual?` : 'Nenhum paciente da agenda de hoje tem alerta alto.'}`
+  const saudacao = `${ola}, ${titulo} ${primeiro}. ${comAlertaHoje.length ? `${comAlertaHoje.length} pacientes da agenda de hoje têm alertas altos.` : 'Nenhum paciente da agenda de hoje tem alerta alto.'}`
+  const foco = comAlertaHoje[0]
+  const focoD = foco ? dossies.find((x) => x.paciente.id === foco.pacienteId) : undefined
+  const focoAl = foco ? alertasPorPac.get(foco.pacienteId!) ?? [] : []
+  const briefing = comAlertaHoje.map((c) => { const al = (alertasPorPac.get(c.pacienteId!) ?? [])[0]; return `${c.hora} · ${c.nome}: ${al?.titulo ?? ''}` })
 
-  const ocupacao = (nome?: string) => { const l = agendaToda.filter((c) => !nome || c.profissional === nome); return pct(l.filter((c) => c.status !== 'agendado').length, l.length) }
+  const confirmadasDe = (nome?: string) => { const l = agendaToda.filter((c) => !nome || c.profissional === nome); return pct(l.filter((c) => c.status === 'confirmado' || c.status === 'atendido').length, l.length) }
 
   return (
     <Moldura nav={navClinica(todos.length)} ativo="painel" alertas={todos.length} perguntar="#assistente"
@@ -97,13 +102,20 @@ export default async function PainelClinica({ searchParams }: { searchParams: Pr
             <span className={s.chip}>Integração: <strong className={s.verde}>Ativa</strong></span>
             <span className={s.selo}>Dados fictícios de demonstração</span>
           </div>
+          {foco && focoAl[0] && (
+            <Link href={`/clinica/p/${foco.pacienteId}`} className={s.vidro}>
+              {retrato(foco.nome) ? <img src={retrato(foco.nome)} alt="" width={44} height={44} className={s.foto} /> : <span className={s.fotoIni} style={{ width: 44, height: 44 }} aria-hidden="true">{iniciais(foco.nome)}</span>}
+              <span className={s.vidroTxt}><small>Hoje {foco.hora} · {foco.nome}</small><strong>{focoAl[0].titulo}</strong></span>
+              <span className={s.vidroAl} aria-hidden="true"><TriangleAlert size={16} /></span>
+            </Link>
+          )}
         </div>
       }
       abas={<>
-        <Aba on={!profSel} href="/clinica" Icone={LayoutGrid} titulo="Toda a clínica" sub={`${agendaToda.length} consultas hoje`} destaque={<><span>Agenda ocupada</span><strong className="num">{br(ocupacao())}%</strong><CheckCircle2 size={16} color="var(--ok)" aria-hidden="true" /></>} />
+        <Aba on={!profSel} href="/clinica" Icone={LayoutGrid} titulo="Toda a clínica" sub={`${agendaToda.length} consultas hoje`} destaque={<><span>Confirmadas hoje</span><strong className="num">{br(confirmadasDe())}%</strong><CheckCircle2 size={16} color="var(--ok)" aria-hidden="true" /></>} />
         {(equipe ?? []).map((e) => (
           <Aba key={e.id} on={profSel?.id === e.id} href={`/clinica?p=${e.id}`} Icone={e.especialidade?.startsWith('Orto') ? Stethoscope : UserRound} titulo={e.nome} sub={`${e.especialidade} · ${agendaToda.filter((c) => c.profissional === e.nome).length} hoje`}
-            destaque={<><span>Agenda ocupada</span><strong className="num">{br(ocupacao(e.nome))}%</strong><CheckCircle2 size={16} color="var(--ok)" aria-hidden="true" /></>} />
+            destaque={<><span>Confirmadas hoje</span><strong className="num">{br(confirmadasDe(e.nome))}%</strong><CheckCircle2 size={16} color="var(--ok)" aria-hidden="true" /></>} />
         ))}
         <Aba href="/clinica#integracoes" Icone={Network} titulo="Rede conectada" sub={`${fontes.size} unidades de origem`} />
       </>}>
@@ -122,8 +134,8 @@ export default async function PainelClinica({ searchParams }: { searchParams: Pr
         </article>
 
         <article className={`card ${s.kpi} entra`} style={{ ['--i' as string]: 1 }}>
-          <header><h2><HeartPulse size={20} aria-hidden="true" />Chegam com histórico</h2><a href="#chegou" className={s.seta} aria-label="Ver documentos"><ArrowUpRight size={17} /></a></header>
-          <p className={s.kpiSub}>Pacientes ativos com dossiê no Elo</p>
+          <header><h2><HeartPulse size={20} aria-hidden="true" />Com histórico</h2><a href="#chegou" className={s.seta} aria-label="Ver documentos"><ArrowUpRight size={17} /></a></header>
+          <p className={s.kpiSub}>Pacientes ativos que já chegam com dossiê</p>
           <div className={s.kpiNum}><strong className="num">78,4%</strong><CheckCircle2 size={22} color="var(--ok)" aria-hidden="true" /></div>
           <Tracos fracao={0.784} rotulos={['Com dossiê', 'Sem dossiê', '1.000', '276']} />
         </article>
@@ -135,18 +147,20 @@ export default async function PainelClinica({ searchParams }: { searchParams: Pr
           <Tracos fracao={altos / Math.max(todos.length, 1)} cor="crit" rotulos={['Altos', 'Para revisar', String(altos), String(todos.length - altos)]} />
         </article>
 
-        <div className={`${s.assist} entra`} style={{ ['--i' as string]: 3 }}><Assistente pacientes={resumos} saudacao={saudacao} /></div>
+        {focoD && foco && <div className={`${s.jornada} entra`} style={{ ['--i' as string]: 3 }}><Jornada d={focoD} alertas={focoAl} hora={foco.hora} clinica={org.nome} /></div>}
+
+        <div className={`${s.assist} entra`} style={{ ['--i' as string]: 3 }}><Assistente pacientes={resumos} saudacao={saudacao} briefing={briefing} /></div>
 
         <article className={`card ${s.fluxo} entra`} style={{ ['--i' as string]: 4 }}>
           <header><h2><UserRound size={20} aria-hidden="true" />Fluxo de pacientes</h2><span className={s.seta} aria-hidden="true"><ArrowUpRight size={17} /></span></header>
-          <p className={s.kpiSub}>Últimos 30 dias · toda a clínica</p>
+          <p className={s.kpiSub}>Consultas nos últimos 30 dias · toda a clínica</p>
           <div className={s.fluxoTopo}>
-            <div className={s.fluxoNum}><strong className="num">{total30.toLocaleString('pt-BR')}</strong><span className="pill pill-ok">atendimentos</span></div>
+            <div className={s.fluxoNum}><strong className="num">{total30.toLocaleString('pt-BR')}</strong><span className="pill pill-ok">consultas</span></div>
             <dl className={s.mini}>
-              <div><dt className="num">{br(media)}</dt><dd>por dia aberto</dd></div>
+              <div><dt className="num">{br(media)}</dt><dd>média por dia aberto</dd></div>
               <div><dt className="num">{pico.v}</dt><dd>pico, {dataBR(pico.data).slice(0, 5)}</dd></div>
               <div><dt className="num">{sabados.length ? Math.round(sabados.reduce((a, p) => a + p.v, 0) / sabados.length) : 0}</dt><dd>média aos sábados</dd></div>
-              <div><dt className="num">{serie[serie.length - 1].v}</dt><dd>hoje</dd></div>
+              <div><dt className="num">{abertos.length}</dt><dd>dias abertos</dd></div>
             </dl>
           </div>
           <Barras serie={serie} />
@@ -155,7 +169,7 @@ export default async function PainelClinica({ searchParams }: { searchParams: Pr
 
         <article className={`card ${s.agenda} entra`} style={{ ['--i' as string]: 5 }} id="agenda">
           <header><h2><CalendarCheck2 size={20} aria-hidden="true" />Consultas de hoje</h2><span className={s.seta} aria-hidden="true"><ArrowUpRight size={17} /></span></header>
-          <p className={s.kpiSub}>{agenda.length} marcadas · {agenda.filter((c) => c.status === 'atendido').length} atendidas</p>
+          <p className={s.kpiSub}>{(() => { const a = agenda.filter((c) => c.status === 'atendido').length; return `${agenda.length} ${agenda.length === 1 ? 'marcada' : 'marcadas'} · ${a} ${a === 1 ? 'atendida' : 'atendidas'}` })()}</p>
           <ol className={s.consultas}>
             {agenda.map((c) => {
               const al = c.pacienteId ? alertasPorPac.get(c.pacienteId) ?? [] : []
@@ -197,7 +211,7 @@ export default async function PainelClinica({ searchParams }: { searchParams: Pr
           <p className={s.kpiSub}>Registros recebidos no padrão FHIR (simulado na demonstração)</p>
           <ul className={s.fontes}>
             {[...fontes.entries()].sort((a, b) => b[1] - a[1]).map(([o, n]) => (
-              <li key={o}><span>{o}</span><Tracos fracao={n / Math.max(totalFhir, 1)} cor="cobalt" n={24} /><strong className="num">{n}</strong></li>
+              <li key={o}><span>{o}</span><span className={s.barraF}><span style={{ width: `${(n / Math.max(totalFhir, 1)) * 100}%` }} /></span><strong className="num">{n}</strong></li>
             ))}
           </ul>
           <h3 className={s.sub}>Quem abriu os dossiês</h3>

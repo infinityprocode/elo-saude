@@ -8,7 +8,7 @@ export function Tracos({ fracao, cor = 'ok', n = 56, rotulos }: { fracao: number
       <svg viewBox={`0 0 ${n * 6} 36`} width="100%" height="36" preserveAspectRatio="none" aria-hidden="true" style={{ display: 'block' }}>
         {Array.from({ length: n }, (_, i) => <rect key={i} x={i * 6 + 1} y="0" width="2.6" height="36" rx="1.3" fill={i < cheio ? CORES[cor] : '#d6dfeb'} />)}
       </svg>
-      {rotulos && <div className="num" style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, color: 'var(--ink-3)' }}><span>{rotulos[2]}</span><span>{rotulos[3]}</span></div>}
+      {rotulos && <div className="num" style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, fontWeight: 600, color: 'var(--ink)' }}><span>{rotulos[2]}</span><span>{rotulos[3]}</span></div>}
     </div>
   )
 }

@@ -7,6 +7,6 @@ export function navClinica(alertas: number): ItemNav[] {
     { k: 'pacientes', href: '/clinica#pacientes', rotulo: 'Pacientes', Icone: Users, badge: alertas },
     { k: 'agenda', href: '/clinica#agenda', rotulo: 'Agenda', Icone: CalendarDays },
     { k: 'assistente', href: '/clinica#assistente', rotulo: 'Assistente', Icone: Sparkles },
-    { k: 'documentos', href: '/clinica#chegou', rotulo: 'Documentos', Icone: FileText },
+    { k: 'documentos', href: '/clinica#chegou', rotulo: 'Documentos', curto: 'Docs', Icone: FileText },
   ]
 }

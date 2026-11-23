@@ -4,7 +4,7 @@ import { Bell, Search, Sparkles } from 'lucide-react'
 import { Simbolo } from '@/components/Marca'
 import s from './Moldura.module.css'
 
-export type ItemNav = { k: string; href: string; rotulo: string; Icone: LucideIcon; badge?: number }
+export type ItemNav = { k: string; href: string; rotulo: string; curto?: string; Icone: LucideIcon; badge?: number }
 export type Usuario = { nome: string; papel: string; iniciais: string; foto?: string }
 
 // Moldura do app no padrão aprovado (referência de 23/11): faixa azul com a ilustração, navegação em
@@ -47,10 +47,10 @@ export function Moldura({ nav, ativo, usuario, alertas = 0, perguntar, faixa, ab
       </div>
 
       <nav className={s.inferior} aria-label="Navegação">
-        {nav.slice(0, 5).map(({ k, href, rotulo, Icone, badge }) => (
+        {nav.slice(0, 5).map(({ k, href, rotulo, curto, Icone, badge }) => (
           <Link key={k} href={href} className={k === ativo ? s.on : ''} aria-current={k === ativo ? 'page' : undefined}>
             <span className={s.ico}><Icone size={21} strokeWidth={1.9} aria-hidden="true" />{badge ? <em>{badge}</em> : null}</span>
-            <span>{rotulo}</span>
+            <span>{curto ?? rotulo}</span>
           </Link>
         ))}
       </nav>

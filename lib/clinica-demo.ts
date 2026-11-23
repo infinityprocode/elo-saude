@@ -16,9 +16,10 @@ export function serieAtendimentos(dias = 30, deslocamento = 0): Ponto[] {
   for (let i = dias - 1; i >= 0; i--) {
     const d = new Date(fim); d.setDate(fim.getDate() - i)
     const dow = d.getDay()
-    const base = dow === 0 ? 0 : dow === 6 ? 9 : 19 + (dow === 1 ? 4 : 0)
-    const tendencia = (dias - i) * 0.12
-    out.push({ data: iso(d), v: dow === 0 ? 0 : Math.round(base + tendencia + r() * 7) })
+    const base = dow === 0 ? 0 : dow === 6 ? 3 : 5 + (dow === 1 ? 1 : 0)
+    const v = dow === 0 ? 0 : Math.round(base + r() * 3)
+    // o último dia da série é hoje: vale o tamanho da agenda de hoje, para os números baterem
+    out.push({ data: iso(d), v: i === 0 && deslocamento === 0 ? agendaHoje().length : v })
   }
   return out
 }

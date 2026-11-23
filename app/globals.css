@@ -7,8 +7,8 @@
   /* tinta (azul-marinho tintado) */
   --ink: #0d1b33;
   --ink-2: #3c4b66;
-  --ink-3: #6a7894;
-  --ink-4: #98a4ba;
+  --ink-3: #56647c;
+  --ink-4: #7d8aa1;
   /* superfícies (neutros tintados de azul) */
   --page: #eef3fa;
   --page-2: #e6edf8;
@@ -46,8 +46,6 @@
   --shadow-3: 0 2px 4px rgba(13, 37, 84, .05), 0 24px 60px -24px rgba(31, 91, 214, .35);
   --ring: 0 0 0 3px rgba(47, 111, 233, .28);
   /* tipo */
-  --font-sans: 'Manrope', 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --t-12: 12px; --t-13: 13.5px; --t-15: 15px; --t-19: 19px; --t-24: 24px; --t-30: 30px; --t-38: 38px; --t-48: 48px;
   /* movimento */
   --ease: cubic-bezier(.2, .8, .2, 1);
@@ -61,7 +59,7 @@ html { -webkit-text-size-adjust: 100%; scroll-padding-top: 88px; scroll-padding-
 body {
   background: var(--page);
   color: var(--ink);
-  font-family: var(--font-sans);
+  font-family: var(--font-sans), 'Segoe UI', sans-serif;
   font-size: var(--t-15);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
@@ -75,8 +73,8 @@ button { cursor: pointer; }
 ::selection { background: var(--cobalt-100); }
 
 .num { font-variant-numeric: tabular-nums; }
-.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-.eyebrow { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.mono { font-family: var(--font-mono), ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.eyebrow { font-family: var(--font-mono), ui-monospace, monospace; font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
 
 /* fundo vivo: dois orbes que derivam devagar atrás de tudo */
 .atmosfera { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; background: radial-gradient(1200px 700px at 85% -10%, #dfeaff 0%, rgba(223, 234, 255, 0) 60%), var(--page); }

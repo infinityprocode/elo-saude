@@ -4,7 +4,7 @@
 .titulo h2 { font-size: 19px; font-weight: 600; }
 .topo p { font-size: 13px; color: var(--ink-3); display: flex; align-items: center; gap: 8px; }
 .online { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 3px var(--ok-100); }
-.conversa { flex: 1; display: grid; gap: 14px; align-content: start; max-height: 440px; overflow-y: auto; padding-right: 4px; scrollbar-width: thin; }
+.conversa { flex: 1; display: grid; gap: 14px; align-content: start; max-height: 520px; overflow-y: auto; padding-right: 4px; scrollbar-width: thin; }
 .elo { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 10px; align-items: start; animation: entra .35s var(--ease) both; }
 .eloIco { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: #f8fbff; background: linear-gradient(150deg, var(--cobalt-400), var(--cobalt-600)); }
 .eloTxt { display: grid; gap: 8px; font-size: 14px; line-height: 1.5; color: var(--ink); }
@@ -28,7 +28,7 @@
 .chips button:hover { border-color: var(--cobalt-200); }
 .entrada { display: flex; align-items: center; gap: 8px; min-width: 0; }
 .mais { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line-2); color: var(--ink-3); flex: none; }
-.entrada input { flex: 1; min-width: 0; height: 44px; border-radius: 999px; border: 0; background: var(--surface-3); padding: 0 16px; font-size: 16px; outline: none; }
+.entrada input { flex: 1; min-width: 0; height: 44px; border-radius: 999px; border: 0; background: var(--surface-3); padding: 0 44px 0 16px; font-size: 16px; outline: none; text-overflow: ellipsis; }
 .entrada input:focus { box-shadow: var(--ring); }
-.mic { color: var(--ink-4); margin-left: -36px; margin-right: 12px; flex: none; }
+.mic { color: var(--ink-4); margin-left: -40px; margin-right: 14px; flex: none; pointer-events: none; }
 .entrada button { width: 46px; height: 46px; border-radius: 50%; border: 0; background: var(--ink); color: #eef4ff; display: grid; place-items: center; flex: none; }

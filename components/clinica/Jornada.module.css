@@ -1,0 +1,37 @@
+.caixa { padding: 24px; display: grid; gap: 20px; border-radius: 28px; overflow: hidden; position: relative; background: linear-gradient(180deg, #fbfdff 0%, #f5f9ff 100%); }
+.topo { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.quem { display: flex; align-items: center; gap: 14px; }
+.foto, .ini { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 3px var(--surface), 0 6px 16px -6px rgba(13, 37, 84, .5); }
+.ini { display: grid; place-items: center; font-weight: 700; color: var(--cobalt-700); background: linear-gradient(145deg, var(--cobalt-50), var(--sky-100)); }
+.eyebrow { font-size: 13px; color: var(--ink-3); font-weight: 500; }
+.quem h2 { font-size: clamp(22px, 2.4vw, 30px); font-weight: 400; letter-spacing: -0.03em; }
+.legenda { display: flex; gap: 6px; }
+.legenda span { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
+
+/* trilho: rola na horizontal no celular, ocupa a largura no computador */
+.trilho { list-style: none; margin: 0; padding: 4px 2px 8px; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(190px, 1fr); gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; position: relative; scrollbar-width: none; }
+.trilho::-webkit-scrollbar { display: none; }
+.trilho::before { content: ''; position: absolute; left: 24px; right: 24px; top: 26px; height: 3px; border-radius: 3px; background: linear-gradient(90deg, #6fd4b4, #5c8ff5 50%, #9b8cf0); opacity: .55; }
+.passo { position: relative; scroll-snap-align: start; display: grid; gap: 4px; align-content: start; padding-top: 0; }
+.no { position: relative; z-index: 1; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; color: #f8fbff; border: 4px solid #f7faff; box-shadow: 0 8px 18px -8px rgba(13, 37, 84, .55); margin-bottom: 8px; }
+.passo time { font-size: 13px; font-weight: 700; color: var(--ink-2); }
+.passo strong { font-size: 15px; font-weight: 600; line-height: 1.3; }
+.onde { font-size: 13px; color: var(--ink-3); }
+.rede { justify-self: start; font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; margin-top: 4px; }
+.sus { background: #dcf3e8; color: #0f7a53; }
+.part { background: #dce8ff; color: #1747ad; }
+.conv { background: #ebe8fb; color: #5a4fb3; }
+.no.sus { background: linear-gradient(150deg, #34c38f, #138a5e); }
+.no.part { background: linear-gradient(150deg, #5c8ff5, #1f5bd6); }
+.no.conv { background: linear-gradient(150deg, #9b8cf0, #5a4fb3); }
+.passoAlerta .no { box-shadow: 0 0 0 4px #f7faff, 0 0 0 7px rgba(195, 53, 47, .55), 0 8px 18px -8px rgba(195, 53, 47, .7); }
+.bandeira { position: absolute; top: -4px; left: 40px; display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: #fff8f7; background: var(--crit); padding: 3px 8px; border-radius: 999px; box-shadow: 0 6px 14px -6px rgba(195, 53, 47, .8); }
+.hoje .no { background: var(--surface); color: var(--cobalt-600); border: 3px dashed var(--cobalt-400); }
+.hoje time { color: var(--cobalt-600); }
+.achado { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 4px 14px; align-items: center; padding: 14px 16px; border-radius: 20px; background: linear-gradient(90deg, #fff1ef, #fff8f7); border: 1px solid #f6c9c3; color: var(--ink-2); font-size: 14px; line-height: 1.45; }
+.achado strong { color: var(--ink); }
+.achadoIco { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--crit); color: #fff8f7; box-shadow: 0 8px 16px -8px rgba(195, 53, 47, .8); }
+.abrir { grid-column: 2; justify-self: start; font-weight: 700; color: var(--crit); font-size: 13.5px; }
+.achado:hover { border-color: var(--crit-400); }
+@media (min-width: 760px) { .achado { grid-template-columns: 40px minmax(0, 1fr) auto; } .abrir { grid-column: auto; } }
+@media (min-width: 1024px) { .trilho { overflow: visible; } }

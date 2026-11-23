@@ -3,7 +3,7 @@ import type { Ponto } from '@/lib/clinica-demo'
 // Barras finas por dia, como na referência: dia útil em verde, sábado em âmbar, domingo (fechado) em cinza.
 // Marcador no pico do período.
 export function Barras({ serie }: { serie: Ponto[] }) {
-  const W = 600, H = 120, n = serie.length, passo = W / n
+  const W = 600, H = 150, n = serie.length, passo = W / n
   const max = Math.max(...serie.map((p) => p.v), 1)
   const pico = serie.reduce((m, p, i) => (p.v > serie[m].v ? i : m), 0)
   const dow = (iso: string) => new Date(iso + 'T12:00:00-03:00').getDay()

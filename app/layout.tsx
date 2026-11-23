@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from 'next'
-import { Manrope, JetBrains_Mono } from 'next/font/google'
+import localFont from 'next/font/local'
 import './globals.css'
 
-const sans = Manrope({ subsets: ['latin'], variable: '--font-sans', display: 'swap', weight: ['200', '300', '400', '500', '600', '700', '800'] })
-const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono', display: 'swap', weight: ['400', '500'] })
+// Fontes servidas pelo próprio projeto (build não depende do Google). Manrope e JetBrains Mono, licença OFL.
+const sans = localFont({ src: './fonts/manrope-latin.woff2', weight: '200 800', variable: '--font-sans', display: 'swap', adjustFontFallback: 'Arial' })
+const mono = localFont({ src: './fonts/jetbrains-mono-latin.woff2', weight: '400 500', variable: '--font-mono', display: 'swap', preload: false })
 
 export const metadata: Metadata = {
   title: 'Elo Saúde · seu histórico de saúde, completo, onde você for',

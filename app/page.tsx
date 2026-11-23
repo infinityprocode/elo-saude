@@ -73,7 +73,6 @@ export default async function Inicio({ searchParams }: { searchParams: Promise<{
           <div className={s.bento}>
             <article className={`card ${s.b1}`}>
               <div className={s.ocr} aria-hidden="true">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/exemplos/receita.png" alt="" width={820} height={1120} loading="lazy" />
                 <span className={s.ocrSeta}><ArrowRight size={18} /></span>
                 <ul><li><small>Remédio</small>Cefalexina 250 mg/5 mL</li><li><small>Como usar</small>5 mL de 6 em 6 horas</li><li><small>Observação</small>Suspender ibuprofeno</li></ul>

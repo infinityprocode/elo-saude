@@ -22,9 +22,9 @@ function rotear(t: string): Acao | null {
 }
 
 // Assistente do painel em formato de conversa. Cada resposta sai do dossiê compartilhado com a clínica.
-export function Assistente({ pacientes, saudacao }: { pacientes: ResumoPaciente[]; saudacao: string }) {
+export function Assistente({ pacientes, saudacao, briefing = [] }: { pacientes: ResumoPaciente[]; saudacao: string; briefing?: string[] }) {
   const [pid, setPid] = useState(pacientes[0]?.id)
-  const [msgs, setMsgs] = useState<Msg[]>([{ de: 'elo', texto: saudacao, hora: '' }])
+  const [msgs, setMsgs] = useState<Msg[]>([{ de: 'elo', texto: saudacao, linhas: briefing.length ? briefing : undefined, hora: '' }])
   const [texto, setTexto] = useState('')
   const fim = useRef<HTMLDivElement>(null)
   const p = pacientes.find((x) => x.id === pid)
@@ -65,7 +65,7 @@ export function Assistente({ pacientes, saudacao }: { pacientes: ResumoPaciente[
               {m.texto && <p>{m.texto}</p>}
               {m.linhas && <ul>{m.linhas.map((l, j) => <li key={j}>{l}</li>)}</ul>}
               {m.alertas && <ul className={s.alertas}>{m.alertas.map((al, j) => <li key={j} className={al.gravidade === 'alta' ? s.alta : s.media}><strong>{al.titulo}</strong><span>{al.detalhe}</span></li>)}</ul>}
-              {(m.linhas || m.alertas) && <small>Apoio ao profissional, não diagnóstico.</small>}
+              {(m.linhas || m.alertas) && <small>{i === 0 ? 'Escolha o paciente abaixo e peça o resumo ou os alertas.' : 'Apoio ao profissional, não diagnóstico.'}</small>}
             </div>
             {m.hora && <time className={s.hora}>{m.hora}</time>}
           </div>
