@@ -12,7 +12,7 @@
 .grad { background: linear-gradient(100deg, #1f5bd6 0%, #2f8de0 45%, #0f9e96 100%); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 400; padding-bottom: .06em; }
 .hero p { font-size: 17px; line-height: 1.6; color: var(--ink-2); max-width: 50ch; }
 .ctas { display: flex; flex-wrap: wrap; gap: 10px; }
-.ctas .btn { min-height: 54px; padding: 0 24px; border-radius: 999px; font-size: 15.5px; }
+.ctas :global(.btn) { min-height: 54px; padding: 0 24px; border-radius: 999px; font-size: 15.5px; }
 .btnVidro { background: rgba(251, 253, 255, .85); border: 1px solid rgba(255, 255, 255, .95); color: var(--ink); box-shadow: 0 8px 20px -14px rgba(13, 37, 84, .5); }
 .garantias { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 18px; }
 .garantias li { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: var(--ink-2); }
@@ -102,6 +102,7 @@
 .cartaoClinica { background: linear-gradient(150deg, #2f6fe9 0%, #1f5bd6 55%, #1747ad 100%); border-color: #1f5bd6; padding: 22px; }
 .cartaoClinica .cTxt small, .cartaoClinica .cTxt strong, .cartaoClinica .cTxt span, .cartaoClinica .cIr { color: #f3f7ff; }
 .cartaoClinica .cTxt strong { font-size: 20px; }
+.cartaoAutonomo { background: linear-gradient(150deg, #eef4ff, #e6f7f5); border-color: #cfe3f5; }
 .aviso { font-size: 13px; color: var(--warn); background: var(--warn-100); border-radius: 999px; padding: 6px 14px; justify-self: start; }
 
 .rodape { display: grid; gap: 10px; padding: 28px 0 8px; border-top: 1px solid var(--line); color: var(--ink-3); font-size: 14px; line-height: 1.55; }
@@ -113,7 +114,8 @@
   .contasGrade, .caminhos { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .segLista { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .demoGrade { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .cartaoClinica { grid-column: 1 / -1; }
+  .cartaoClinica { grid-column: span 2; }
+  .cartaoAutonomo { grid-column: span 1; }
 }
 @media (min-width: 1024px) {
   .entrarMobile { display: none; }

@@ -1,0 +1,11 @@
+.receber { background: linear-gradient(170deg, #eef4ff, var(--surface) 55%); }
+.form { display: flex; gap: 8px; margin: 6px 0 4px; }
+.form input { flex: 1; min-width: 0; height: 48px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--surface); padding: 0 18px; font-size: 16px; outline: none; }
+.form input:focus { border-color: var(--cobalt-200); box-shadow: var(--ring); }
+.form :global(.btn) { border-radius: 999px; min-height: 48px; }
+.erro { font-size: 13.5px; color: var(--crit); background: var(--crit-100); padding: 8px 12px; border-radius: 12px; }
+.aviso { font-size: 13.5px; color: var(--warn); background: var(--warn-100); padding: 8px 12px; border-radius: 12px; }
+@media (min-width: 1360px) {
+  .agenda { grid-column: span 4 !important; }
+  .carteira { grid-column: span 5 !important; }
+}

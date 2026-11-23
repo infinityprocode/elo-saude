@@ -17,10 +17,10 @@ export async function middleware(req: NextRequest) {
     },
   })
   const { data: { user } } = await sb.auth.getUser()
-  if (!user && (req.nextUrl.pathname.startsWith('/app') || req.nextUrl.pathname.startsWith('/clinica'))) {
+  if (!user && ['/app', '/clinica', '/consultorio'].some((r) => req.nextUrl.pathname.startsWith(r))) {
     return NextResponse.redirect(new URL('/?entrar=1', process.env.NEXT_PUBLIC_APP_URL ?? req.url))
   }
   return res
 }
 
-export const config = { matcher: ['/app/:path*', '/clinica/:path*'] }
+export const config = { matcher: ['/app/:path*', '/clinica/:path*', '/consultorio/:path*', '/c/:path*'] }

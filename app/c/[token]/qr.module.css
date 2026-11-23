@@ -1,0 +1,13 @@
+.pagina { min-height: 100dvh; display: grid; place-items: center; padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); background: linear-gradient(160deg, #e3eef9 0%, #cfe1f2 45%, #b4cde6 100%); }
+.cartao { width: 100%; max-width: 460px; display: grid; gap: 16px; justify-items: start; padding: 28px; border-radius: 32px; background: rgba(251, 253, 255, .92); border: 1px solid rgba(255, 255, 255, .95); box-shadow: 0 40px 80px -40px rgba(13, 37, 84, .55); }
+.icone { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; color: #f8fbff; background: linear-gradient(150deg, var(--cobalt-400), var(--cobalt-600)); box-shadow: 0 12px 24px -12px rgba(31, 91, 214, .8); }
+.cartao h1 { font-size: 32px; font-weight: 300; letter-spacing: -0.035em; color: #0f2a52; }
+.cartao p { font-size: 15px; line-height: 1.55; color: var(--ink-2); }
+.cartao form { width: 100%; display: grid; }
+.cartao :global(.btn) { min-height: 52px; border-radius: 999px; }
+.resumo { width: 100%; display: grid; gap: 8px; padding: 14px 16px; border-radius: 18px; background: var(--surface-2); border: 1px solid var(--line); font-size: 14px; color: var(--ink-2); }
+.resumo span { display: flex; align-items: center; gap: 8px; }
+.resumo strong { color: var(--ink); }
+.aviso { color: var(--warn) !important; background: var(--warn-100); padding: 10px 14px; border-radius: 14px; }
+.nota { font-size: 13px !important; color: var(--ink-3) !important; }
+.voltar { font-size: 14px; font-weight: 600; }

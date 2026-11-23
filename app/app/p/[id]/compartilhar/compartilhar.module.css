@@ -1,0 +1,50 @@
+.faixa { display: grid; gap: 10px; max-width: 680px; }
+.eyebrow { font-size: 14px; font-weight: 500; color: var(--ink-2); }
+.faixa h1 { font-size: clamp(42px, 7vw, 84px); font-weight: 300; letter-spacing: -0.045em; line-height: 1; color: #0f2a52; }
+.faixa p { font-size: 16px; color: var(--ink-2); line-height: 1.55; max-width: 52ch; }
+.grade { display: grid; gap: 16px; max-width: 1180px; margin: 0 auto; align-items: start; }
+.grade > * { min-width: 0; }
+.gerar, .lista, .emerg { padding: 24px; display: grid; gap: 14px; border-radius: 28px; }
+.grade header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.grade h2 { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 600; }
+.grade h2 svg { color: var(--cobalt-500); }
+.sub { font-size: 14.5px; color: var(--ink-2); line-height: 1.55; }
+.erro { font-size: 14px; color: var(--crit); background: var(--crit-100); padding: 10px 14px; border-radius: 14px; }
+.ok { font-size: 14px; color: var(--ok); background: var(--ok-100); padding: 10px 14px; border-radius: 14px; }
+.prazos { display: grid; gap: 14px; }
+.prazos fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; }
+.prazos legend { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+.prazos label { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 12px; align-items: center; padding: 14px 16px; border-radius: 18px; border: 1px solid var(--line-2); background: var(--surface); cursor: pointer; }
+.prazos label:has(input:checked) { border-color: var(--cobalt-400); background: var(--cobalt-50); box-shadow: 0 0 0 3px rgba(47, 111, 233, .12); }
+.prazos input { width: 20px; height: 20px; accent-color: var(--cobalt-500); }
+.prazos label span { display: grid; }
+.prazos small { font-size: 13px; color: var(--ink-3); }
+.prazos :global(.btn) { justify-self: start; min-height: 52px; padding: 0 24px; border-radius: 999px; }
+.qrBox { display: grid; gap: 18px; align-items: center; }
+.qr { width: 220px; height: 220px; padding: 12px; border-radius: 22px; background: #fff; border: 1px solid var(--line); box-shadow: var(--shadow-2); justify-self: center; }
+.qr :global(svg) { width: 100%; height: 100%; display: block; }
+.qrEmerg { border: 3px solid var(--crit); }
+.qrInfo { display: grid; gap: 8px; font-size: 14px; color: var(--ink-2); }
+.qrInfo strong { font-size: 17px; color: var(--ink); }
+.qrInfo span { display: flex; align-items: center; gap: 8px; }
+.link { font-weight: 700; color: var(--cobalt-600); }
+.lista ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.lista li { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 10px 12px; align-items: center; padding: 12px; border-radius: 18px; background: var(--surface-2); border: 1px solid var(--line); }
+.ico { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--cobalt-50); color: var(--cobalt-600); }
+.txt { display: grid; min-width: 0; line-height: 1.35; }
+.txt strong { font-size: 15px; font-weight: 600; }
+.txt small { font-size: 13px; color: var(--ink-3); }
+.lista form { grid-column: 2; }
+.revogar { min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1px solid #f1b7b0; background: var(--surface); color: var(--crit); font-weight: 700; font-size: 13.5px; }
+.revogar:hover { background: var(--crit-100); }
+.emerg { background: linear-gradient(170deg, #fff7f6, var(--surface) 50%); border-color: #f6c9c3; }
+.emerg h2 svg { color: var(--crit); }
+@media (min-width: 760px) {
+  .qrBox { grid-template-columns: 220px minmax(0, 1fr); }
+  .lista li { grid-template-columns: 40px minmax(0, 1fr) auto; }
+  .lista form { grid-column: auto; }
+}
+@media (min-width: 1024px) {
+  .grade { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+  .gerar { grid-row: span 2; }
+}

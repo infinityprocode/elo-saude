@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation'
-import { Activity, History, LayoutGrid, ShieldCheck } from 'lucide-react'
+import { Activity, History, LayoutGrid, QrCode, ShieldCheck } from 'lucide-react'
 import { supabaseServidor } from '@/lib/supabase/server'
 import { carregarDossie } from '@/lib/dossie'
 import { calcularAlertas } from '@/lib/alertas'
@@ -22,6 +22,7 @@ export default async function DossiePaciente({ params, searchParams }: { params:
   const base = `/app/p/${id}`
   const nav: ItemNav[] = [
     { k: 'resumo', href: base, rotulo: 'Meu dossiê', Icone: LayoutGrid },
+    { k: 'compartilhar', href: `${base}/compartilhar`, rotulo: 'Compartilhar', Icone: QrCode },
     { k: 'alertas', href: `${base}#alertas`, rotulo: 'Alertas', Icone: Activity, badge: alertas.length || undefined },
     { k: 'linha', href: `${base}#linha`, rotulo: 'Linha do tempo', Icone: History },
     { k: 'acessos', href: `${base}#acessos`, rotulo: 'Acessos', Icone: ShieldCheck },
@@ -34,6 +35,7 @@ export default async function DossiePaciente({ params, searchParams }: { params:
       abas={<>
         <Aba on href={base} Icone={LayoutGrid} titulo="Resumo" sub="alergias, remédios, condições" />
         <Aba href={`${base}#linha`} Icone={History} titulo="Linha do tempo" sub={`${d.atendimentos.length} atendimentos`} />
+        <Aba href={`${base}/compartilhar`} Icone={QrCode} titulo="Compartilhar" sub="QR com prazo" />
         <Aba href={`${base}#acessos`} Icone={ShieldCheck} titulo="Quem viu" sub={`${(acessos ?? []).length} acessos`} />
       </>}>
       <DossieView d={d} f={f} alertas={alertas} acessos={acessos ?? []} modo="paciente" base={base} cabecalho={false} />

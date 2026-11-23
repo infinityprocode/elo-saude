@@ -171,6 +171,11 @@ export default async function Inicio({ searchParams }: { searchParams: Promise<{
                   <span className={s.cTxt}><small>Visão da clínica</small><strong>Dra. Paula, Clínica Vida Plena</strong><span>Agenda, jornada do paciente, alertas antes da consulta e assistente.</span></span>
                   <ArrowRight size={22} aria-hidden="true" className={s.cIr} />
                 </Entrar>
+                <Entrar conta="fernando" className={`${s.cartao} ${s.cartaoAutonomo}`}>
+                  <Foto nome="Dr. Fernando Costa" ini="FC" />
+                  <span className={s.cTxt}><small>Médico autônomo</small><strong>Dr. Fernando, cardiologista</strong><span>Consultório próprio, carteira de pacientes e QR para receber o histórico.</span></span>
+                  <ArrowRight size={20} aria-hidden="true" className={s.cIr} />
+                </Entrar>
                 <Entrar conta="marina" className={s.cartao}>
                   <Foto nome="Marina Souza" ini="MS" />
                   <span className={s.cTxt}><small>Paciente, pela mãe</small><strong>Lívia, 7 anos</strong><span>UBS na segunda, UPA na quarta, dois diagnósticos.</span></span>

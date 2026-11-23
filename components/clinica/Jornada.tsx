@@ -21,7 +21,8 @@ export function Jornada({ d, alertas, hora, clinica, href }: { d: Dossie; alerta
   const divergente = new Set(alertas.filter((a) => a.tipo === 'divergencia').flatMap((a) => a.id.replace('div-', '').split(/-(?=[0-9a-f]{8}-)/)))
   const passos: Passo[] = [
     ...d.atendimentos.map((a) => ({ id: a.id, quando: a.data, onde: a.organizacoes?.nome ?? 'Local não informado', tipo: a.organizacoes?.tipo, rede: a.rede, o_que: a.hipotese ?? a.queixa ?? 'Atendimento', detalhe: a.profissionais?.nome, alerta: divergente.has(a.id) })),
-    ...d.exames.filter((e) => e.resultado_em).map((e) => ({ id: e.id, quando: e.resultado_em + 'T18:00:00-03:00', onde: e.organizacoes?.nome ?? 'Laboratório', tipo: e.organizacoes?.tipo, rede: e.organizacoes?.rede, o_que: `${e.nome}${e.alterado ? ' alterado' : ''}`, detalhe: e.resultado ?? undefined })),
+    // exames só quando alterados: o caminho mostra os atendimentos e o que pede atenção
+    ...d.exames.filter((e) => e.resultado_em && e.alterado).map((e) => ({ id: e.id, quando: e.resultado_em + 'T18:00:00-03:00', onde: e.organizacoes?.nome ?? 'Laboratório', tipo: e.organizacoes?.tipo, rede: e.organizacoes?.rede, o_que: `${e.nome}${e.alterado ? ' alterado' : ''}`, detalhe: e.resultado ?? undefined })),
   ].sort((a, b) => (a.quando < b.quando ? -1 : 1)).slice(-5)
   const principal = alertas[0]
   return (
@@ -59,7 +60,7 @@ export function Jornada({ d, alertas, hora, clinica, href }: { d: Dossie; alerta
         <Link href={href ?? `/clinica/p/${d.paciente.id}`} className={s.achado}>
           <span className={s.achadoIco} aria-hidden="true"><TriangleAlert size={18} /></span>
           <span><strong>{principal.titulo}.</strong> {principal.detalhe}</span>
-          <span className={s.abrir}>{href ? 'Ver na demonstração' : 'Abrir dossiê'}</span>
+          <span className={s.abrir}>{href?.startsWith('#') ? 'Ver na demonstração' : 'Abrir dossiê'}</span>
         </Link>
       )}
     </section>

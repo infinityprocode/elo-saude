@@ -147,7 +147,9 @@ insert into agenda (organizacao_id, profissional_id, paciente_id, paciente_nome,
  ('00000000-0000-4000-8000-0000000000a4','00000000-0000-4000-8000-0000000000b5','00000000-0000-4000-8000-0000000000c1','Lívia Souza','2026-11-23 14:00-03','Retorno após UPA · 7 anos','confirmado'),
  ('00000000-0000-4000-8000-0000000000a4','00000000-0000-4000-8000-0000000000b4','00000000-0000-4000-8000-0000000000c2','José Almeida','2026-11-23 15:30-03','Retorno · dor no joelho','confirmado'),
  ('00000000-0000-4000-8000-0000000000a4','00000000-0000-4000-8000-0000000000b5',null,'Helena Prates','2026-11-23 16:45-03','Check-up anual','agendado'),
- (null,'00000000-0000-4000-8000-0000000000b3','00000000-0000-4000-8000-0000000000c2','José Almeida','2026-11-23 09:00-03','Consultório · controle da varfarina (INR)','confirmado');
+ (null,'00000000-0000-4000-8000-0000000000b3','00000000-0000-4000-8000-0000000000c2','José Almeida','2026-11-23 09:00-03','Controle da varfarina (INR)','atendido'),
+ (null,'00000000-0000-4000-8000-0000000000b3',null,'Antônio Reis','2026-11-23 10:30-03','Primeira consulta · palpitação','confirmado'),
+ (null,'00000000-0000-4000-8000-0000000000b3',null,'Sueli Martins','2026-11-23 14:00-03','Retorno · pressão alta','agendado');
 
 -- ===== Auditoria inicial =====
 insert into acessos (paciente_id, ator_user_id, ator_nome, ator_registro, organizacao_nome, consentimento_id, acao, em) values

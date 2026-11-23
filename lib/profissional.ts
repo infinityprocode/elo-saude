@@ -65,3 +65,28 @@ export async function equipeDaOrg(sb: SupabaseClient, orgId: string) {
   const { data } = await sb.from('atuacoes').select('profissionais(id,nome,especialidade)').eq('organizacao_id', orgId).eq('ativo', true)
   return ((data ?? []) as unknown as { profissionais: { id: string; nome: string; especialidade: string | null } }[]).map((x) => x.profissionais).sort((a, b) => a.nome.localeCompare(b.nome))
 }
+
+// ===== Consultório próprio (autônomo) =====
+
+export async function dossiesDoProfissional(sb: SupabaseClient, profId: string): Promise<Dossie[]> {
+  const { data } = await sb.from('carteiras').select('paciente_id').eq('profissional_id', profId)
+  const ids = [...new Set((data ?? []).map((x) => x.paciente_id as string))]
+  return (await Promise.all(ids.map((id) => carregarDossie(sb, id)))).filter(Boolean) as Dossie[]
+}
+
+export async function agendaDoConsultorio(sb: SupabaseClient, profId: string): Promise<Consulta[]> {
+  await sb.rpc('demo_agenda_do_dia')
+  const hoje = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' })
+  const { data } = await sb.from('agenda').select('id,inicio,paciente_id,paciente_nome,motivo,status,profissional_id')
+    .eq('profissional_id', profId).is('organizacao_id', null)
+    .gte('inicio', `${hoje}T00:00:00-03:00`).lte('inicio', `${hoje}T23:59:59-03:00`).order('inicio')
+  return (data ?? []).map((a) => ({
+    id: a.id, hora: new Date(a.inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }),
+    nome: a.paciente_nome, detalhe: a.motivo ?? '', profissional: '', profissionalId: a.profissional_id, status: a.status, pacienteId: a.paciente_id ?? undefined,
+  }))
+}
+
+export async function consentimentosParaMim(sb: SupabaseClient, profId: string) {
+  const { data } = await sb.from('consentimentos').select('id,paciente_id,fim,revogado_em,pacientes(nome)').eq('profissional_id', profId).is('revogado_em', null).gt('fim', new Date().toISOString())
+  return (data ?? []) as unknown as { id: string; paciente_id: string; fim: string; pacientes: { nome: string } | null }[]
+}

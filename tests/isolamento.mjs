@@ -108,6 +108,26 @@ for (const [c, esperado] of Object.entries(MATRIZ)) {
   ok('Profissional não revoga consentimento alheio', !!eOutro)
 }
 
+// QR: o paciente gera, o profissional que lê aceita; vale uma vez; a revogação corta
+{
+  const marina = await entrar('marina'), ricardo = await entrar('ricardo'), recepcao = await entrar('recepcao')
+  const { data: { user } } = await marina.auth.getUser()
+  const fim = new Date(Date.now() + 3600_000).toISOString()
+  const { data: qr, error: eQr } = await marina.from('consentimentos').insert({ paciente_id: ID.livia, escopo: 'completo', fim, criado_por: user.id }).select('id,token').single()
+  ok('QR: responsável gera o compartilhamento', !eQr && !!qr?.token, eQr?.message ?? '')
+  const { data: previa } = await ricardo.rpc('previa_compartilhamento', { tok: qr.token })
+  ok('QR: antes de aceitar, o profissional vê só o primeiro nome', previa?.primeiro_nome === 'Lívia' && !('nascimento' in (previa ?? {})))
+  const { error: eRec } = await recepcao.rpc('aceitar_compartilhamento', { tok: qr.token })
+  ok('QR: quem não é profissional não aceita', !!eRec)
+  const { data: pid } = await ricardo.rpc('aceitar_compartilhamento', { tok: qr.token })
+  ok('QR: o profissional aceita e passa a ver a Lívia', pid === ID.livia && (await ids(ricardo, 'pacientes', 'id')).includes(ID.livia))
+  const fernando = await entrar('fernando')
+  const { data: pid2 } = await fernando.rpc('aceitar_compartilhamento', { tok: qr.token })
+  ok('QR: vale uma vez só (outro profissional não reaproveita)', pid2 === null && !(await ids(fernando, 'pacientes', 'id')).includes(ID.livia))
+  await marina.rpc('revogar_consentimento', { cid: qr.id })
+  ok('QR: a responsável revoga e o profissional perde o acesso', !(await ids(ricardo, 'pacientes', 'id')).includes(ID.livia))
+}
+
 // Cartão de emergência: só com token, justificativa e só o essencial
 {
   const anon = await entrar(null)
