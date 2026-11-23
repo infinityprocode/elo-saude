@@ -70,8 +70,9 @@ for (const [c, esperado] of Object.entries(MATRIZ)) {
   const { data: abriu } = await sb.rpc('abrir_dossie', { p: ID.jose })
   ok('Dr. Fernando (consentimento direto): abre o dossiê do José', abriu === true)
   const jose = await entrar('jose')
-  const { data: ac } = await jose.from('acessos').select('ator_nome,acao').order('em', { ascending: false }).limit(1)
-  ok('José vê na auditoria que o Dr. Fernando abriu', ac?.[0]?.ator_nome === 'Dr. Fernando Costa' && ac?.[0]?.acao === 'visualizou')
+  // (aberturas repetidas em 30 minutos contam como uma só; por isso procura, não exige ser a última)
+  const { data: ac } = await jose.from('acessos').select('ator_nome,acao').eq('ator_nome', 'Dr. Fernando Costa').eq('acao', 'visualizou').limit(1)
+  ok('José vê na auditoria que o Dr. Fernando abriu', (ac ?? []).length === 1)
 }
 
 // Prontuário imutável e auditoria só de inclusão

@@ -50,6 +50,17 @@ Cada pessoa tem uma identidade só (CPF ou CNS, guardados **apenas como HMAC**; 
 - O painel do profissional lê com a **sessão do próprio profissional**; a chave de serviço não é usada nas telas clínicas.
 - **Teste automático** (`tests/isolamento.mjs`, 83 regras) roda a cada envio: entra com cada conta pela chave pública e confere quem vê o quê, revogação, imutabilidade e emergência.
 
+## IA de apoio (nunca decide)
+
+| Função | Como funciona | Trava |
+| --- | --- | --- |
+| Ler documento por foto | Foto ou PDF vai para armazenamento privado; Claude Sonnet 5.5 (via OpenRouter) devolve campos em JSON com o trecho do papel | Nada entra no dossiê sem o paciente conferir; não deduz diagnóstico que não está escrito |
+| Atendimento por voz | Áudio transcrito no nosso servidor (Whisper, instância só do Elo); Claude Haiku 5.5 organiza queixa, hipótese, conduta, receita e exames | O médico revisa e assina; o banco exige consentimento e audita sozinho (trigger) |
+| Resumo em 30 segundos | Claude Haiku 5.5 resume o dossiê que o banco liberou para quem pede | Toda frase cita registros reais; frase sem fonte válida é descartada |
+| Alertas | Regras conferidas em código (`lib/alertas.ts`), testadas em `tests/alertas.ts` | A IA só explica; não cria alerta |
+
+Saída sempre em esquema JSON estrito, temperatura 0, chave exclusiva com teto de gasto, usada só no servidor.
+
 ## Tecnologia
 
 - Next.js 15 (App Router) + TypeScript

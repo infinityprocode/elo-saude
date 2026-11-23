@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation'
 import { History, LayoutGrid, ShieldCheck, Stethoscope } from 'lucide-react'
 import { Moldura, Aba } from '@/components/shell/Moldura'
 import { DossieView } from '@/components/DossieView'
+import { AtenderPorVoz } from '@/components/profissional/AtenderPorVoz'
+import { ResumoIA } from '@/components/profissional/ResumoIA'
 import { FaixaPaciente } from '@/components/FaixaPaciente'
 import { exigirProfissional, abrirDossie } from '@/lib/profissional'
 import { calcularAlertas } from '@/lib/alertas'
@@ -29,7 +31,8 @@ export default async function DossieNoConsultorio({ params, searchParams }: { pa
         <Aba href={`${base}#acessos`} Icone={ShieldCheck} titulo="Acessos" sub="quem abriu o dossiê" />
         <Aba href="/consultorio" Icone={Stethoscope} titulo="Meu consultório" sub="agenda e carteira" />
       </>}>
-      <DossieView d={d} f={f} alertas={alertas} acessos={acessos ?? []} modo="profissional" base={base} cabecalho={false} />
+      <DossieView d={d} f={f} alertas={alertas} acessos={acessos ?? []} modo="profissional" base={base} cabecalho={false}
+        ferramentas={<><ResumoIA pacienteId={id} /><AtenderPorVoz pacienteId={id} orgId={undefined} voltar={base} /></>} />
     </Moldura>
   )
 }

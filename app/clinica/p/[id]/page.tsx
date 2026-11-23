@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation'
 import { Activity, History, LayoutGrid, ShieldCheck } from 'lucide-react'
 import { Moldura, Aba } from '@/components/shell/Moldura'
 import { DossieView } from '@/components/DossieView'
+import { AtenderPorVoz } from '@/components/profissional/AtenderPorVoz'
+import { ResumoIA } from '@/components/profissional/ResumoIA'
 import { FaixaPaciente } from '@/components/FaixaPaciente'
 import { exigirProfissional, abrirDossie } from '@/lib/profissional'
 import { calcularAlertas } from '@/lib/alertas'
@@ -30,7 +32,8 @@ export default async function DossieNaClinica({ params, searchParams }: { params
         <Aba href={`${base}#acessos`} Icone={ShieldCheck} titulo="Acessos" sub="quem abriu o dossiê" />
         <Aba href="/clinica" Icone={Activity} titulo="Voltar ao painel" sub="agenda de hoje" />
       </>}>
-      <DossieView d={d} f={f} alertas={alertas} acessos={acessos ?? []} modo="profissional" base={base} cabecalho={false} />
+      <DossieView d={d} f={f} alertas={alertas} acessos={acessos ?? []} modo="profissional" base={base} cabecalho={false}
+        ferramentas={<><ResumoIA pacienteId={id} /><AtenderPorVoz pacienteId={id} orgId={prof.orgs[0]?.id} voltar={base} /></>} />
     </Moldura>
   )
 }

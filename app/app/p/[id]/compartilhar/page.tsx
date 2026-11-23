@@ -1,7 +1,8 @@
 import { notFound } from 'next/navigation'
-import { Activity, Clock3, History, LayoutGrid, QrCode, ShieldAlert, ShieldCheck, Siren, UserRound, Building2 } from 'lucide-react'
+import { Activity, Clock3, LayoutGrid, QrCode, ShieldAlert, ShieldCheck, Siren, UserRound, Building2 } from 'lucide-react'
 import { supabaseServidor } from '@/lib/supabase/server'
-import { Moldura, Aba, type ItemNav } from '@/components/shell/Moldura'
+import { Moldura, Aba } from '@/components/shell/Moldura'
+import { navPaciente } from '@/lib/navPaciente'
 import { qrSvg, urlPublica } from '@/lib/qr'
 import { retrato, iniciais } from '@/lib/retratos'
 import { dataBR, horaBR } from '@/lib/formato'
@@ -32,12 +33,7 @@ export default async function Compartilhar({ params, searchParams }: { params: P
   const ehMae = user?.email?.startsWith('marina')
   const quem = ehMae ? 'Marina Souza' : paciente.nome
   const primeiro = paciente.nome.split(' ')[0]
-  const nav: ItemNav[] = [
-    { k: 'resumo', href: base, rotulo: 'Meu dossiê', Icone: LayoutGrid },
-    { k: 'compartilhar', href: `${base}/compartilhar`, rotulo: 'Compartilhar', Icone: QrCode },
-    { k: 'linha', href: `${base}#linha`, rotulo: 'Linha do tempo', Icone: History },
-    { k: 'acessos', href: `${base}#acessos`, rotulo: 'Acessos', Icone: ShieldCheck },
-  ]
+  const nav = navPaciente(id)
   const destino = (c: Consent) => c.profissionais ? `${c.profissionais.nome}${c.profissionais.especialidade ? ` · ${c.profissionais.especialidade}` : ''}` : c.organizacoes ? c.organizacoes.nome : 'QR ainda não usado'
   const restante = (fim: string) => { const h = Math.round((new Date(fim).getTime() - agora) / 3600_000); return h < 1 ? 'menos de 1 hora' : h === 1 ? '1 hora' : h < 48 ? `${h} horas` : `${Math.round(h / 24)} dias` }
 

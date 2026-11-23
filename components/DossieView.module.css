@@ -34,7 +34,9 @@
 .bloco h2 { font-size: var(--t-15); display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
 .bloco h2 svg { color: var(--cobalt-500); }
 .bloco ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
-.bloco li { display: grid; gap: 2px; }
+.bloco li { display: grid; gap: 2px; scroll-margin-top: 90px; }
+.item { scroll-margin-top: 90px; }
+.item:target .cartao, .bloco li:target { box-shadow: 0 0 0 3px var(--cobalt-200); border-radius: 14px; }
 .liTopo { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
 .bloco li small { color: var(--ink-3); font-size: 12.5px; }
 .blocoAlergia { border-color: #f4c7c2; background: linear-gradient(180deg, #fff8f7, var(--surface)); }

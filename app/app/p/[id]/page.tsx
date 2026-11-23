@@ -1,9 +1,10 @@
 import { notFound } from 'next/navigation'
-import { Activity, History, LayoutGrid, QrCode, ShieldCheck } from 'lucide-react'
+import { History, LayoutGrid, QrCode, ShieldCheck } from 'lucide-react'
 import { supabaseServidor } from '@/lib/supabase/server'
 import { carregarDossie } from '@/lib/dossie'
 import { calcularAlertas } from '@/lib/alertas'
-import { Moldura, Aba, type ItemNav } from '@/components/shell/Moldura'
+import { Moldura, Aba } from '@/components/shell/Moldura'
+import { navPaciente } from '@/lib/navPaciente'
 import { DossieView } from '@/components/DossieView'
 import { FaixaPaciente } from '@/components/FaixaPaciente'
 import { retrato, iniciais } from '@/lib/retratos'
@@ -20,13 +21,7 @@ export default async function DossiePaciente({ params, searchParams }: { params:
   const { data: { user } } = await sb.auth.getUser()
   const alertas = calcularAlertas(d)
   const base = `/app/p/${id}`
-  const nav: ItemNav[] = [
-    { k: 'resumo', href: base, rotulo: 'Meu dossiê', Icone: LayoutGrid },
-    { k: 'compartilhar', href: `${base}/compartilhar`, rotulo: 'Compartilhar', Icone: QrCode },
-    { k: 'alertas', href: `${base}#alertas`, rotulo: 'Alertas', Icone: Activity, badge: alertas.length || undefined },
-    { k: 'linha', href: `${base}#linha`, rotulo: 'Linha do tempo', Icone: History },
-    { k: 'acessos', href: `${base}#acessos`, rotulo: 'Acessos', Icone: ShieldCheck },
-  ]
+  const nav = navPaciente(id)
   const ehMae = user?.email?.startsWith('marina')
   const quem = ehMae ? 'Marina Souza' : d.paciente.nome
   return (

@@ -25,6 +25,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --no-audit --no-fund
+      - name: Regras de alerta clínico
+        run: npx tsx tests/alertas.ts
       - name: Isolamento entre pacientes, profissionais, clínica e recepção
         run: node tests/isolamento.mjs
         env:

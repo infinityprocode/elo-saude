@@ -9,6 +9,16 @@ const AINE = ['ibuprofeno', 'diclofenaco', 'naproxeno', 'cetoprofeno', 'nimesuli
 const PENICILINAS = ['penicilina', 'amoxicilina', 'ampicilina', 'benzilpenicilina']
 const SINTOMAS = ['febre', 'dor', 'tosse', 'vômito', 'diarreia', 'coceira', 'falta de ar', 'cansaço']
 
+// hipóteses equivalentes não são divergência: "Artrose do joelho" e "artrose do joelho direito" são a mesma
+const PALAVRAS_VAZIAS = new Set(['de', 'do', 'da', 'dos', 'das', 'e', 'em', 'a', 'o', 'com', 'sem', 'direito', 'direita', 'esquerdo', 'esquerda', 'leve', 'aguda', 'agudo', 'cronica', 'cronico'])
+const termos = (t: string) => new Set(t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\([^)]*\)/g, ' ').split(/[^a-z0-9]+/).filter((w) => w.length > 2 && !PALAVRAS_VAZIAS.has(w)).map((w) => w.slice(0, 6)))
+export function mesmaHipotese(a: string, b: string): boolean {
+  const A = termos(a), B = termos(b)
+  if (!A.size || !B.size) return false
+  const comum = [...A].filter((w) => B.has(w)).length
+  return comum / Math.min(A.size, B.size) >= 0.6
+}
+
 const dia = (s: string) => new Date(s.length === 10 ? s + 'T12:00:00-03:00' : s).getTime()
 const DIA = 864e5
 const pa = (m: Medicamento) => m.principio_ativo.toLowerCase()
@@ -30,7 +40,7 @@ export function calcularAlertas(d: Dossie): Alerta[] {
   for (let i = 1; i < ats.length; i++) {
     const a = ats[i - 1], b = ats[i]
     const dias = Math.round((dia(b.data) - dia(a.data)) / DIA)
-    if (dias <= 7 && a.hipotese !== b.hipotese) {
+    if (dias <= 7 && !mesmaHipotese(a.hipotese!, b.hipotese!)) {
       const comuns = SINTOMAS.filter((s) => a.queixa?.toLowerCase().includes(s) && b.queixa?.toLowerCase().includes(s))
       out.push({ id: `div-${a.id}-${b.id}`, gravidade: 'alta', tipo: 'divergencia', quando: b.data,
         titulo: `Hipóteses diferentes em ${dias} ${dias === 1 ? 'dia' : 'dias'}`,

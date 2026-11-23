@@ -27,7 +27,7 @@ function passa(item: ItemLinha, f: string) {
 type Acesso = { id: string | number; ator_nome: string; organizacao_nome: string | null; acao: string; em: string }
 
 // Dossiê do paciente. Mesmo componente para o paciente (visão própria) e para o profissional (com alertas no topo).
-export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], modo = 'paciente', base, cabecalho = true }: { d: Dossie; f?: string; alertas?: Alerta[]; acessos?: Acesso[]; modo?: 'paciente' | 'profissional'; base: string; cabecalho?: boolean }) {
+export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], modo = 'paciente', base, cabecalho = true, ferramentas }: { d: Dossie; f?: string; alertas?: Alerta[]; acessos?: Acesso[]; modo?: 'paciente' | 'profissional'; base: string; cabecalho?: boolean; ferramentas?: React.ReactNode }) {
   const p = d.paciente
   const ativos = d.medicamentos.filter((m) => emUso(m))
   const condicoes = d.condicoes.filter((c) => c.status !== 'resolvida')
@@ -68,12 +68,14 @@ export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], modo = '
         </section>
       )}
 
+      {ferramentas}
+
       <section className={s.bento} aria-label="Resumo clínico">
         <div className={`card ${s.bloco} ${d.alergias.length ? s.blocoAlergia : ''} entra`} style={{ ['--i' as string]: 2 }}>
           <h2><ShieldAlert size={18} aria-hidden="true" />Alergias</h2>
           {d.alergias.length === 0 ? <p className={s.vazio}>Nenhuma alergia registrada.</p> : (
             <ul>{d.alergias.map((a) => (
-              <li key={a.id}><span className={s.liTopo}><strong>{a.substancia}</strong>{a.gravidade && <span className={`pill ${a.gravidade === 'grave' ? 'pill-crit' : 'pill-warn'}`}>{a.gravidade}</span>}</span><small>{a.reacao}</small></li>
+              <li key={a.id} id={`reg-${a.id}`}><span className={s.liTopo}><strong>{a.substancia}</strong>{a.gravidade && <span className={`pill ${a.gravidade === 'grave' ? 'pill-crit' : 'pill-warn'}`}>{a.gravidade}</span>}</span><small>{a.reacao}</small></li>
             ))}</ul>
           )}
         </div>
@@ -81,7 +83,7 @@ export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], modo = '
           <h2><Pill size={18} aria-hidden="true" />Remédios em uso <span className={`${s.cont} num`}>{ativos.length}</span></h2>
           {ativos.length === 0 ? <p className={s.vazio}>Nenhum remédio em uso.</p> : (
             <ul className={s.remedios}>{ativos.map((m) => (
-              <li key={m.id}><strong>{m.nome}</strong><small>{[m.dose, m.posologia].filter(Boolean).join(', ')}</small><small className={s.prescr}>{m.profissionais ? m.profissionais.nome : 'Prescritor não informado'}</small></li>
+              <li key={m.id} id={`reg-${m.id}`}><strong>{m.nome}</strong><small>{[m.dose, m.posologia].filter(Boolean).join(', ')}</small><small className={s.prescr}>{m.profissionais ? m.profissionais.nome : 'Prescritor não informado'}</small></li>
             ))}</ul>
           )}
         </div>
@@ -89,7 +91,7 @@ export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], modo = '
           <h2><Stethoscope size={18} aria-hidden="true" />Condições</h2>
           {condicoes.length === 0 ? <p className={s.vazio}>Nenhuma condição registrada.</p> : (
             <ul>{condicoes.map((c) => (
-              <li key={c.id}><span className={s.liTopo}><strong>{c.descricao}</strong>{c.cronica ? <span className="pill pill-info">crônica</span> : c.status === 'hipotese' ? <span className="pill pill-neutra">hipótese</span> : null}</span><small className="mono">{c.cid10 ? `CID ${c.cid10}` : ''}{c.inicio ? ` · desde ${dataBR(c.inicio)}` : ''}</small></li>
+              <li key={c.id} id={`reg-${c.id}`}><span className={s.liTopo}><strong>{c.descricao}</strong>{c.cronica ? <span className="pill pill-info">crônica</span> : c.status === 'hipotese' ? <span className="pill pill-neutra">hipótese</span> : null}</span><small className="mono">{c.cid10 ? `CID ${c.cid10}` : ''}{c.inicio ? ` · desde ${dataBR(c.inicio)}` : ''}</small></li>
             ))}</ul>
           )}
         </div>
@@ -108,12 +110,12 @@ export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], modo = '
             if (i.tipo === 'atendimento') {
               const a = i.a
               return (
-                <li key={`a-${a.id}`} className={s.item}>
+                <li key={`a-${a.id}`} id={`reg-${a.id}`} className={s.item}>
                   <span className={`${s.ponto} ${s.pAt}`} aria-hidden="true"><Stethoscope size={15} /></span>
                   <article className={`card ${s.cartao}`}>
                     <div className={s.cTopo}><time className="mono">{dataBR(a.data)} · {horaBR(a.data)}</time><span className={s.tags}><span className={`pill ${REDE[a.rede]?.classe}`}>{REDE[a.rede]?.rotulo}{a.operadora ? ` · ${a.operadora}` : ''}</span><Origem o={a.origem} /></span></div>
-                    <h3><span className={s.tipo}>{TIPO_ATENDIMENTO[a.tipo] ?? a.tipo}</span>{a.organizacoes?.nome ?? 'Local não informado'}</h3>
-                    <p className={s.meta}>{a.profissionais ? `${a.profissionais.nome} · ${a.profissionais.especialidade ?? ''} · ${registroProf(a.profissionais)}` : 'Profissional não informado'}{a.organizacoes ? ` · ${TIPO_ORG[a.organizacoes.tipo]} em ${a.organizacoes.cidade}` : ''}</p>
+                    <h3><span className={s.tipo}>{TIPO_ATENDIMENTO[a.tipo] ?? a.tipo}</span>{a.organizacoes?.nome ?? a.local_texto ?? 'Local não informado'}</h3>
+                    <p className={s.meta}>{a.profissionais ? `${a.profissionais.nome} · ${a.profissionais.especialidade ?? ''} · ${registroProf(a.profissionais)}` : a.profissional_texto ?? 'Profissional não informado'}{a.organizacoes ? ` · ${TIPO_ORG[a.organizacoes.tipo]} em ${a.organizacoes.cidade}` : ''}</p>
                     <dl className={s.campos}>
                       {a.queixa && <><dt>Queixa</dt><dd>{a.queixa}</dd></>}
                       {a.hipotese && <><dt>Hipótese</dt><dd><strong>{a.hipotese}</strong></dd></>}
@@ -132,7 +134,7 @@ export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], modo = '
             if (i.tipo === 'resultado') {
               const e = i.e
               return (
-                <li key={`r-${e.id}`} className={s.item}>
+                <li key={`r-${e.id}`} id={`reg-${e.id}`} className={s.item}>
                   <span className={`${s.ponto} ${e.alterado ? s.pAlt : s.pEx}`} aria-hidden="true"><FlaskConical size={15} /></span>
                   <article className={`card ${s.cartao}`}>
                     <div className={s.cTopo}><time className="mono">{dataBR(e.resultado_em)}</time><Origem o={e.origem} /></div>
@@ -145,7 +147,7 @@ export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], modo = '
             }
             const m = i.m
             return (
-              <li key={`m-${m.id}`} className={s.item}>
+              <li key={`m-${m.id}`} id={`reg-${m.id}`} className={s.item}>
                 <span className={`${s.ponto} ${s.pMed}`} aria-hidden="true"><Pill size={15} /></span>
                 <article className={`card ${s.cartao}`}>
                   <div className={s.cTopo}><time className="mono">{dataBR(m.inicio)}</time><Origem o={m.origem} /></div>
