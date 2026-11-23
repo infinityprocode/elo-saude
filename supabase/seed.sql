@@ -107,3 +107,16 @@ insert into exames (paciente_id, nome, pedido_em, resultado_em, resultado, alter
  ('00000000-0000-4000-8000-0000000000c3','Sorologias (HIV, sífilis, hepatite B)','2026-07-10','2026-07-14','Não reagentes',false,'00000000-0000-4000-8000-0000000000a5','integracao_fhir'),
  ('00000000-0000-4000-8000-0000000000c3','Hemograma','2026-10-09','2026-10-11','Hemoglobina 10,4 g/dL (baixa)',true,'00000000-0000-4000-8000-0000000000a5','paciente_foto'),
  ('00000000-0000-4000-8000-0000000000c3','Ultrassom morfológico','2026-10-20','2026-10-20','Desenvolvimento adequado para a idade gestacional',false,'00000000-0000-4000-8000-0000000000a6','integracao_fhir');
+
+-- ===== Painel da clínica (fictício) =====
+update organizacoes set nome = 'Clínica Vida Plena', tipo = 'clinica' where id = '00000000-0000-4000-8000-0000000000a4';
+update profissionais set user_id = :'paula' where id = '00000000-0000-4000-8000-0000000000b4';
+-- os três pacientes de demonstração compartilharam o dossiê com a clínica, válido durante a avaliação
+insert into compartilhamentos (paciente_id, escopo, expira_em, organizacao_id) values
+ ('00000000-0000-4000-8000-0000000000c1','completo','2026-12-31 23:59-03','00000000-0000-4000-8000-0000000000a4'),
+ ('00000000-0000-4000-8000-0000000000c2','completo','2026-12-31 23:59-03','00000000-0000-4000-8000-0000000000a4'),
+ ('00000000-0000-4000-8000-0000000000c3','completo','2026-12-31 23:59-03','00000000-0000-4000-8000-0000000000a4');
+insert into acessos (paciente_id, quem, registro, organizacao, acao, em) values
+ ('00000000-0000-4000-8000-0000000000c2','Dra. Paula Nogueira','CRM DEMO-1004','Clínica Vida Plena','registrou_atendimento','2026-11-20 16:20-03'),
+ ('00000000-0000-4000-8000-0000000000c1','Dra. Paula Nogueira','CRM DEMO-1004','Clínica Vida Plena','visualizou','2026-11-21 10:05-03'),
+ ('00000000-0000-4000-8000-0000000000c3','Dra. Paula Nogueira','CRM DEMO-1004','Clínica Vida Plena','visualizou','2026-11-22 09:12-03');

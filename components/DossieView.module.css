@@ -1,0 +1,98 @@
+.pagina { display: grid; gap: 16px; padding-block: 0 8px; max-width: 1180px; margin-inline: auto; min-width: 0; }
+.pagina > * { min-width: 0; }
+/* cabeçalho com faixa luminosa */
+.cabeca { position: relative; overflow: hidden; border-radius: var(--r-card); padding: 20px; display: grid; gap: 18px; background: radial-gradient(420px 220px at 95% 0%, rgba(124, 196, 255, .45), rgba(124, 196, 255, 0) 70%), linear-gradient(135deg, #f8fbff, #eaf2ff); border: 1px solid #dbe7fb; box-shadow: var(--shadow-2); }
+.cabTopo { display: grid; grid-template-columns: 60px minmax(0, 1fr); gap: 14px; align-items: center; }
+.avatar { width: 60px; height: 60px; border-radius: 18px; display: grid; place-items: center; font-weight: 800; font-size: 20px; color: #f8fbff; background: linear-gradient(145deg, var(--sky-400), var(--cobalt-600)); box-shadow: 0 10px 22px -10px rgba(31, 91, 214, .8); }
+.quem { display: grid; gap: 4px; min-width: 0; }
+.quem h1 { font-size: clamp(26px, 5vw, 38px); font-weight: 800; letter-spacing: -0.03em; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.chips span { display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 10px; border-radius: 999px; background: rgba(251, 253, 255, .85); border: 1px solid var(--line); font-size: 12.5px; font-weight: 600; color: var(--ink-2); }
+.chips svg { color: var(--cobalt-500); }
+.chips .gest { background: var(--aqua-100); color: #0e7f79; border-color: transparent; }
+.cabNums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.cabNums > div { background: rgba(251, 253, 255, .8); border: 1px solid var(--line); border-radius: 16px; padding: 10px 12px; display: grid; }
+.cabNums strong { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+.cabNums span { font-size: 12px; color: var(--ink-3); }
+.emerg { grid-column: 1 / -1; grid-template-columns: 18px minmax(0, 1fr); gap: 8px; align-items: center; font-size: 13.5px; color: var(--ink) !important; }
+.emerg svg { color: var(--crit); }
+.emerg small { display: block; font-size: 11.5px; color: var(--ink-3); }
+
+.alertas { padding: 18px; display: grid; gap: 12px; border-color: #f4c7c2; background: linear-gradient(180deg, #fff8f7, var(--surface)); }
+.alertas header { display: flex; gap: 12px; align-items: center; }
+.alertas h2 { font-size: var(--t-19); }
+.alertas header p { font-size: 12.5px; color: var(--ink-3); }
+.alIco { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--crit); color: #fff8f7; flex: none; box-shadow: 0 8px 18px -8px rgba(195, 53, 47, .8); }
+.alertas ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.alertas li { display: grid; gap: 3px; padding: 12px 14px; border-radius: 14px; border-left: 4px solid; font-size: 13.5px; line-height: 1.45; }
+.alertas li span { color: var(--ink-2); }
+.alta { background: var(--crit-100); border-color: var(--crit) !important; }
+.media { background: var(--warn-100); border-color: var(--warn-400) !important; }
+
+.bento { display: grid; gap: 12px; }
+.bloco { padding: 20px; border-radius: 26px; }
+.bloco h2 { font-size: var(--t-15); display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.bloco h2 svg { color: var(--cobalt-500); }
+.bloco ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.bloco li { display: grid; gap: 2px; }
+.liTopo { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.bloco li small { color: var(--ink-3); font-size: 12.5px; }
+.blocoAlergia { border-color: #f4c7c2; background: linear-gradient(180deg, #fff8f7, var(--surface)); }
+.blocoAlergia h2 svg { color: var(--crit); }
+.remedios li { padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.remedios li:last-child { padding-bottom: 0; border-bottom: 0; }
+.prescr { color: var(--cobalt-600) !important; font-weight: 600; }
+.cont { font-size: 12px; background: var(--cobalt-50); color: var(--cobalt-600); padding: 1px 9px; border-radius: 999px; }
+.vazio { color: var(--ink-3); font-size: 13.5px; }
+
+/* linha do tempo com trilho */
+.linha { display: grid; gap: 14px; scroll-margin-top: 80px; }
+.linhaTopo > *, .linha > *, .itens > *, .bento > * { min-width: 0; }
+.linhaTopo { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.linhaTopo h2 { font-size: var(--t-24); font-weight: 800; letter-spacing: -0.02em; }
+.filtros { display: flex; gap: 4px; padding: 4px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-1); overflow-x: auto; max-width: 100%; scrollbar-width: none; }
+.filtros a { min-height: 38px; padding: 0 14px; display: inline-flex; align-items: center; border-radius: 12px; font-weight: 600; font-size: 13.5px; color: var(--ink-2); white-space: nowrap; }
+.filtros a.on { background: linear-gradient(180deg, var(--cobalt-500), var(--cobalt-600)); color: #f8fbff; }
+.itens { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; position: relative; }
+.itens::before { content: ''; position: absolute; left: 17px; top: 8px; bottom: 8px; width: 2px; background: linear-gradient(var(--cobalt-200), var(--line)); border-radius: 2px; }
+.item { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 10px; align-items: start; }
+.ponto { position: relative; z-index: 1; width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; border: 3px solid var(--page); }
+.pAt { background: var(--cobalt-500); color: #f8fbff; }
+.pEx { background: var(--fhir-100); color: var(--fhir); }
+.pAlt { background: var(--warn-100); color: var(--warn); }
+.pMed { background: var(--aqua-100); color: #0e7f79; }
+.cartao { padding: 16px; display: grid; gap: 6px; min-width: 0; box-shadow: var(--shadow-1); border-radius: 22px; }
+.cTopo { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; justify-content: space-between; }
+.cTopo time { font-size: 12px; color: var(--ink-3); }
+.cartao h3 { font-size: 17px; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.tipo { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--cobalt-600); }
+.meta { font-size: 12.5px; color: var(--ink-3); }
+.texto { font-size: 14px; }
+.campos { display: grid; grid-template-columns: 80px minmax(0, 1fr); gap: 6px 12px; margin: 6px 0 0; font-size: 14px; padding: 12px; border-radius: 14px; background: var(--surface-2); }
+.campos dt { color: var(--ink-3); font-size: 12.5px; padding-top: 1px; }
+.campos dd { margin: 0; }
+.filhos { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.chip { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; padding: 5px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--ink-2); }
+.chip svg { color: var(--cobalt-500); }
+
+.acessos { padding: 18px; display: grid; gap: 12px; scroll-margin-top: 80px; }
+.acessos h2 { font-size: var(--t-15); }
+.acessos ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.acessos li { display: grid; grid-template-columns: 10px minmax(0, 1fr); gap: 4px 10px; align-items: baseline; font-size: 13.5px; color: var(--ink-2); }
+.acessos time { grid-column: 2; font-size: 12px; color: var(--ink-3); }
+.aPonto { width: 8px; height: 8px; border-radius: 50%; background: var(--cobalt-400); }
+
+@media (min-width: 720px) {
+  .cabeca { padding: 28px; }
+  .cabTopo { grid-template-columns: 76px minmax(0, 1fr); gap: 18px; }
+  .avatar { width: 76px; height: 76px; font-size: 26px; border-radius: 22px; }
+  .cabNums { grid-template-columns: repeat(3, minmax(0, 120px)) minmax(0, 1fr); }
+  .emerg { grid-column: auto; }
+  .bento { grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr) minmax(0, 1fr); align-items: start; }
+  .item { grid-template-columns: 44px minmax(0, 1fr); gap: 14px; }
+  .itens::before { left: 21px; }
+  .ponto { width: 44px; height: 44px; border-radius: 14px; }
+  .cartao { padding: 20px; }
+  .acessos li { grid-template-columns: 10px minmax(0, 1fr) auto; }
+  .acessos time { grid-column: auto; }
+}

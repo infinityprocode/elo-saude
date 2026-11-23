@@ -20,6 +20,8 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
   },
+  // avatares e retratos pequenos usam <img> simples de propósito (arquivos locais já otimizados em webp)
+  { rules: { "@next/next/no-img-element": "off" } },
 ];
 
 export default eslintConfig;
