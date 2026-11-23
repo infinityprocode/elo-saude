@@ -21,7 +21,18 @@ async function entrar(conta) {
   }
   return sb
 }
-const ids = async (sb, t, col = 'paciente_id') => { const { data } = await sb.from(t).select(col); return [...new Set((data ?? []).map((r) => r[col]))].sort() }
+// consulta com uma nova tentativa em erro de rede; erro persistente vira falha com a mensagem (nunca passa em silêncio)
+const erros = []
+async function consulta(sb, t, col) {
+  for (let i = 0; i < 2; i++) {
+    const { data, error } = await sb.from(t).select(col)
+    if (!error) return data ?? []
+    if (i === 1) erros.push(`${t}: ${error.message}`)
+    await new Promise((r) => setTimeout(r, 800))
+  }
+  return []
+}
+const ids = async (sb, t, col = 'paciente_id') => [...new Set((await consulta(sb, t, col)).map((r) => r[col]))].sort()
 const conta = async (sb, t) => { const { data } = await sb.from(t).select('id'); return (data ?? []).length }
 
 // Matriz de visibilidade: quem vê quais dossiês
@@ -140,6 +151,7 @@ for (const [c, esperado] of Object.entries(MATRIZ)) {
   ok('Emergência: devolve alergias e remédios, sem histórico', !!card && Array.isArray(card.alergias) && !('atendimentos' in card))
 }
 
+if (erros.length) ok('Nenhuma consulta terminou em erro', false, erros.join(' | '))
 const falhas = resultados.filter((r) => !r.ok)
 for (const r of resultados) console.log(`${r.ok ? 'ok  ' : 'FALHA'}  ${r.nome}${r.ok || !r.detalhe ? '' : `  (${r.detalhe})`}`)
 console.log(`\n${resultados.length - falhas.length} de ${resultados.length} regras conferidas`)
