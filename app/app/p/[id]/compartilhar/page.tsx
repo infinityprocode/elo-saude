@@ -56,7 +56,7 @@ export default async function Compartilhar({ params, searchParams }: { params: P
         {revogado && <p className={s.ok}>Acesso cancelado. A partir de agora, quem tinha esse acesso não vê mais o dossiê.</p>}
 
         <section className={`card ${s.gerar}`} aria-labelledby="t-gerar">
-          <header><h2 id="t-gerar"><QrCode size={20} aria-hidden="true" />Mostrar ao médico</h2></header>
+          <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}><h2 id="t-gerar"><QrCode size={20} aria-hidden="true" />Mostrar ao médico</h2><img src="/arte/3d/compartilhar.webp" width={200} height={200} alt="" aria-hidden="true" decoding="async" style={{ width: 72, height: 72, flex: 'none', margin: '-14px -6px -14px 0' }} /></header>
           <p className={s.sub}>Gere um QR e mostre na consulta. Quem ler e for profissional de saúde recebe o acesso pelo prazo que você escolher.</p>
           {recem && qrNovo ? (
             <div className={s.qrBox}>

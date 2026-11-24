@@ -53,7 +53,7 @@ export default async function Documentos({ params, searchParams }: { params: Pro
         </section>
         <section className={`card ${s.lista}`} aria-labelledby="t-lista">
           <header><h2 id="t-lista"><FileScan size={20} aria-hidden="true" />Seus documentos</h2><span className="pill pill-info num">{(docs ?? []).length}</span></header>
-          {(docs ?? []).length === 0 && <p className={s.sub}>Nenhum documento ainda.</p>}
+          {(docs ?? []).length === 0 && <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}><img src="/arte/3d/documento.webp" width={200} height={200} alt="" aria-hidden="true" decoding="async" style={{ width: 56, height: 56, flex: 'none' }} /><p className={s.sub}>Nenhum documento ainda.</p></div>}
           <ul>
             {(docs ?? []).map((d) => (
               <li key={d.id}>

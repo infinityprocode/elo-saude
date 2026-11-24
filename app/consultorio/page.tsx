@@ -130,7 +130,7 @@ export default async function Consultorio({ searchParams }: { searchParams: Prom
                 </li>
               )
             })}
-            {dossies.length === 0 && <li className={s.vazio}>Nenhum paciente ainda. Peça ao paciente para mostrar o QR do Elo.</li>}
+            {dossies.length === 0 && <li className={s.vazio} style={{ display: 'flex', alignItems: 'center', gap: 12 }}><img src="/arte/3d/consultorio.webp" width={200} height={200} alt="" aria-hidden="true" decoding="async" style={{ width: 56, height: 56, flex: 'none' }} /><span>Nenhum paciente ainda. Peça ao paciente para mostrar o QR do Elo.</span></li>}
           </ul>
         </section>
 

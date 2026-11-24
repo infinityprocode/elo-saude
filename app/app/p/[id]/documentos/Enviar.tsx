@@ -1,6 +1,6 @@
 'use client'
 import { useFormStatus } from 'react-dom'
-import { Camera, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { enviarDocumento } from './actions'
 import s from './documentos.module.css'
 
@@ -22,7 +22,7 @@ export function Enviar({ pacienteId, exemplo, rotulo, miniatura }: { pacienteId:
     <form action={enviarDocumento} className={s.form}>
       <input type="hidden" name="paciente" value={pacienteId} />
       <label className={s.campo}>
-        <Camera size={28} aria-hidden="true" />
+        <img src="/arte/3d/documento.webp" width={200} height={200} alt="" aria-hidden="true" decoding="async" style={{ width: 64, height: 64, flex: 'none', margin: '-6px 0' }} />
         <span><strong>Tirar foto ou escolher arquivo</strong><small>JPG, PNG, WEBP ou PDF, até 10 MB</small></span>
         <input type="file" name="arquivo" accept="image/jpeg,image/png,image/webp,application/pdf" capture="environment" required />
       </label>
