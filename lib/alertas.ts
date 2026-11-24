@@ -26,6 +26,8 @@ const ehAine = (m: Medicamento) => AINE.includes(pa(m))
 
 // dois remédios convivem se os períodos se cruzam (sem depender da data de hoje)
 function convivem(a: Medicamento, b: Medicamento) {
+  // remédio suspenso por um profissional (ativo = false) deixa de gerar alerta de interação: a conduta já resolveu
+  if (!a.ativo || !b.ativo) return false
   const ai = dia(a.inicio ?? '1900-01-01'), af = a.fim ? dia(a.fim) : Infinity
   const bi = dia(b.inicio ?? '1900-01-01'), bf = b.fim ? dia(b.fim) : Infinity
   return ai <= bf && bi <= af

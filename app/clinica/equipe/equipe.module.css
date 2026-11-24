@@ -19,5 +19,5 @@
 .tabela li > div { display: grid; gap: 2px; min-width: 0; }
 .tabela strong { color: var(--ink); }
 .tabela span { color: var(--ink-3); font-size: var(--t-13); }
-.num { display: grid; justify-items: end; font-size: 20px; font-weight: 600; color: var(--ink) !important; font-variant-numeric: tabular-nums; }
+.num { display: grid; justify-items: end; flex: none; white-space: nowrap; font-size: 18px; font-weight: 600; color: var(--ink) !important; font-variant-numeric: tabular-nums; }
 .num small { font-size: var(--t-12); font-weight: 400; color: var(--ink-3); }

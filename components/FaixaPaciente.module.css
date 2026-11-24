@@ -8,10 +8,10 @@
 .chips .gest { background: var(--aqua-100); color: #0e7f79; }
 .lado { display: grid; gap: 10px; align-content: end; }
 .nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-.nums div { display: grid; padding: 12px 14px; border-radius: 20px; background: rgba(251, 253, 255, .7); border: 1px solid rgba(255, 255, 255, .9); }
+.nums div { display: grid; padding: 12px 14px; border-radius: 20px; background: rgba(251, 253, 255, .92); border: 1px solid rgba(255, 255, 255, .9); }
 .nums strong { font-size: 30px; font-weight: 300; letter-spacing: -0.03em; line-height: 1.05; }
 .nums span { font-size: 12px; color: var(--ink-3); }
-.emerg { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13.5px; color: var(--ink-2); padding: 10px 14px; border-radius: 16px; background: rgba(251, 253, 255, .7); border: 1px solid rgba(255, 255, 255, .9); }
+.emerg { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13.5px; color: var(--ink-2); padding: 10px 14px; border-radius: 16px; background: rgba(251, 253, 255, .92); border: 1px solid rgba(255, 255, 255, .9); }
 .emerg svg { color: var(--crit); }
 .emerg strong { color: var(--ink); }
 @media (min-width: 1024px) {

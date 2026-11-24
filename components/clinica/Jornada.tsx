@@ -20,7 +20,7 @@ type Passo = { id: string; quando: string; onde: string; tipo?: string; rede?: s
 export function Jornada({ d, alertas, hora, clinica, href }: { d: Dossie; alertas: Alerta[]; hora: string; clinica: string; href?: string }) {
   const divergente = new Set(alertas.filter((a) => a.tipo === 'divergencia').flatMap((a) => a.id.replace('div-', '').split(/-(?=[0-9a-f]{8}-)/)))
   const passos: Passo[] = [
-    ...d.atendimentos.map((a) => ({ id: a.id, quando: a.data, onde: a.organizacoes?.nome ?? 'Local não informado', tipo: a.organizacoes?.tipo, rede: a.rede, o_que: a.hipotese ?? a.queixa ?? 'Atendimento', detalhe: a.profissionais?.nome, alerta: divergente.has(a.id) })),
+    ...d.atendimentos.map((a) => ({ id: a.id, quando: a.data, onde: a.organizacoes?.nome ?? a.local_texto ?? (a.profissionais ? `Consultório de ${a.profissionais.nome}` : 'Local não informado'), tipo: a.organizacoes?.tipo, rede: a.rede, o_que: a.hipotese ?? a.queixa ?? 'Atendimento', detalhe: a.profissionais?.nome, alerta: divergente.has(a.id) })),
     // exames só quando alterados: o caminho mostra os atendimentos e o que pede atenção
     ...d.exames.filter((e) => e.resultado_em && e.alterado).map((e) => ({ id: e.id, quando: e.resultado_em + 'T18:00:00-03:00', onde: e.organizacoes?.nome ?? 'Laboratório', tipo: e.organizacoes?.tipo, rede: e.organizacoes?.rede, o_que: `${e.nome}${e.alterado ? ' alterado' : ''}`, detalhe: e.resultado ?? undefined })),
   ].sort((a, b) => (a.quando < b.quando ? -1 : 1)).slice(-5)

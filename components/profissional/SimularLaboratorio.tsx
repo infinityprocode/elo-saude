@@ -20,7 +20,7 @@ export function SimularLaboratorio({ pacienteId, voltar, lab }: { pacienteId: st
         <input type="hidden" name="voltar" value={voltar} />
         <button type="submit" className={s.interopLink}><FlaskConical size={15} aria-hidden="true" />Simular resultado do laboratório (FHIR)</button>
       </form>
-      {lab && <p role="status" className="pill pill-info">{novos ? `${novos} resultado(s) chegaram do Laboratório Vale Litoral por FHIR R4 e entraram no histórico.` : AVISO[lab] ?? ''}</p>}
+      {lab && <p role="status" className="pill pill-info">{novos ? `${novos} resultado(s) chegaram do Laboratório Análise Norte por FHIR R4 e entraram no histórico.` : AVISO[lab] ?? ''}</p>}
     </>
   )
 }

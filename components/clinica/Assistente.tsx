@@ -88,7 +88,7 @@ export function Assistente({ pacientes, saudacao, briefing = [] }: { pacientes: 
       <form className={s.entrada} onSubmit={enviar}>
         <span className={s.mais} aria-hidden="true"><Paperclip size={17} /></span>
         <label className="sr" htmlFor="pergunta">Pergunte sobre o paciente</label>
-        <input id="pergunta" value={texto} onChange={(e) => setTexto(e.target.value)} placeholder={`Pergunte sobre ${p?.nome.split(' ')[0] ?? 'o paciente'}...`} autoComplete="off" />
+        <input id="pergunta" value={texto} onChange={(e) => setTexto(e.target.value)} placeholder="Pergunte" aria-label={`Pergunte sobre ${p?.nome.split(' ')[0] ?? 'o paciente'}`} autoComplete="off" />
         <Mic size={17} className={s.mic} aria-hidden="true" />
         <button type="submit" aria-label="Enviar"><Send size={17} /></button>
       </form>

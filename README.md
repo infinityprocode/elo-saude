@@ -16,7 +16,7 @@ Um dossiê do paciente que se monta por três caminhos, sem depender da boa vont
 
 1. **Papéis viram histórico:** foto da receita, atestado ou exame; a IA lê e o paciente confirma.
 2. **Médico registra por voz:** pelo QR do paciente, vê o resumo e dita o atendimento.
-3. **Clínicas e SUS enviam:** modelo de dados inspirado no padrão FHIR (simulado na demo).
+3. **Clínicas e laboratórios enviam:** entrada em **HL7 FHIR R4**; o paciente é achado pelo HMAC do CPF e o resultado entra no dossiê certo, sem duplicar.
 
 Cada registro guarda a **origem** (foto, profissional ou integração). O paciente é dono do dossiê e libera o acesso por QR com prazo; cada acesso fica registrado.
 
@@ -24,11 +24,19 @@ Cada registro guarda a **origem** (foto, profissional ou integração). O pacien
 
 ## Demonstração
 
-Na página inicial há contas de demonstração (clínica e pacientes), com **dados 100% fictícios** (pessoas, unidades, registros profissionais e resultados inventados):
+Na página inicial há sete contas de demonstração, um clique cada, com **dados 100% fictícios** (pessoas, unidades, registros profissionais, CPFs e resultados inventados; fotos geradas por IA):
 
-- **Lívia, 7 anos** (pela mãe): UBS com hipótese de catapora e, dois dias depois, UPA com hipótese de infecção urinária.
-- **José, 78 anos:** três médicos (cardiologista pelo convênio, clínica particular), seis remédios, varfarina.
-- **Camila, 29 anos:** gestante de 24 semanas, pré-natal espalhado.
+| Conta | O que mostrar |
+| --- | --- |
+| **Dra. Paula**, Clínica Vida Plena | Agenda, alertas antes da consulta, resumo em 30 s com fonte, atendimento por voz, suspender remédio, simular laboratório em FHIR |
+| **Dr. Fernando**, consultório próprio | Carteira de pacientes, QR para receber o histórico, consultório sem clínica |
+| **Lívia, 7 anos** (pela mãe) | UBS com hipótese de catapora e, dois dias depois, UPA com hipótese de infecção urinária; foto do laudo vira histórico; cartão de emergência |
+| **José, 78 anos** | Três médicos, sete remédios, varfarina com AINE de outro médico (alerta) |
+| **Camila, 29 anos** | Gestante de 24 semanas, pré-natal espalhado |
+| **Juliana**, recepção | Agenda do dia e chegada; não vê nada clínico (o banco não entrega) |
+| **Roberto**, gestor | Equipe e operação em números, sem nome de paciente |
+
+Roteiro sugerido (3 minutos): entrar como Dra. Paula, abrir o José, ler os alertas e o resumo, ditar o atendimento suspendendo o diclofenaco, simular o resultado do laboratório (INR 3,8 vira alerta). Depois entrar como a mãe da Lívia e mostrar a linha do tempo, quem abriu o dossiê e o cartão de emergência.
 
 ## Cadastro único: três contas que conversam
 
@@ -48,7 +56,12 @@ Cada pessoa tem uma identidade só (CPF ou CNS, guardados **apenas como HMAC**; 
 - **Prontuário imutável**: atendimento registrado por profissional não muda; correção é por adendo.
 - **Emergência**: cartão por token com justificativa obrigatória, só alergias, remédios em uso e doenças crônicas, sempre auditado.
 - O painel do profissional lê com a **sessão do próprio profissional**; a chave de serviço não é usada nas telas clínicas.
-- **Teste automático** (`tests/isolamento.mjs`, 83 regras) roda a cada envio: entra com cada conta pela chave pública e confere quem vê o quê, revogação, imutabilidade e emergência.
+- **Duas etapas (TOTP)** opcional para qualquer conta, exigida **no banco**: quem ativou só lê dado clínico com sessão `aal2` (`eu_profissional()`), mesmo que alguém pule a tela.
+- **Aviso de acesso de emergência**: o paciente vê no app quem usou o cartão, quando e o motivo, e pode cancelar o cartão.
+- **Recepção e gestão sem dado clínico**: recepção só muda o status da agenda; o gestor vê totais por uma função do banco (`painel_gestor`) que confere o papel.
+- **Cabeçalhos**: CSP com nonce por requisição (sem script inline solto), HSTS, `frame-ancestors 'none'`, câmera e microfone só no próprio site.
+- **Limites de uso** nas portas abertas: entrar, cartão de emergência, aceitar QR, envio de documento, IA e FHIR.
+- **Testes automáticos a cada envio** (GitHub Actions, sem chave de serviço): `tests/isolamento.mjs` entra com cada conta pela chave pública e confere **106 regras** (quem vê o quê, revogação, imutabilidade, emergência, suspensão de remédio, recepção, gestor); `tests/alertas.ts` confere as regras clínicas. No servidor, `tests/duas-etapas.mjs` prova no banco que a etapa extra não é contornável (7/7).
 
 ## IA de apoio (nunca decide)
 
@@ -61,11 +74,22 @@ Cada pessoa tem uma identidade só (CPF ou CNS, guardados **apenas como HMAC**; 
 
 Saída sempre em esquema JSON estrito, temperatura 0, chave exclusiva com teto de gasto, usada só no servidor.
 
+## Interoperabilidade: HL7 FHIR R4
+
+| Direção | Como | Prova |
+| --- | --- | --- |
+| **Saída** | `GET /api/fhir/paciente/{id}` (botão "Baixar em HL7 FHIR R4" no dossiê) devolve um `Bundle` com Patient, Encounter, Condition (CID-10), MedicationStatement, AllergyIntolerance, Observation, ServiceRequest, Organization e Practitioner. Lê com a sessão de quem pede: sem consentimento, 404 | **Validador oficial do HL7** (`validator_cli` 7.0.6, FHIR 4.0.1, terminologia em tx.fhir.org): **0 erros e 0 avisos** nos três pacientes. Rode `tests/fhir-validar.sh` |
+| **Entrada** | `POST /api/fhir/receber` com token do parceiro. Acha o paciente pelo CPF no OID oficial do Brasil (`2.16.840.1.113883.13.237`), comparando só o HMAC; grava os Observations com origem "integração"; reenvio não duplica; a auditoria mostra quem enviou | Sem token: 401. CPF desconhecido: 404. Mesma mensagem duas vezes: 3 inseridos, depois 0 |
+
+Na demonstração, o botão "Simular resultado do laboratório (FHIR)" no José manda a mesma mensagem que um laboratório mandaria (INR 3,8 com varfarina em uso), e o alerta aparece na hora.
+
+O CPF nunca sai do Elo: o identificador exportado é o do próprio Elo.
+
 ## Tecnologia
 
 - Next.js 15 (App Router) + TypeScript
 - Supabase (Postgres, Auth, Row Level Security)
-- Modelo inspirado em FHIR R4: Patient, RelatedPerson, Practitioner, PractitionerRole, Organization, EpisodeOfCare, Consent, Encounter + Coverage, Condition, MedicationRequest, AllergyIntolerance, ServiceRequest + DiagnosticReport, DocumentReference, Appointment, Provenance (adendos), AuditEvent
+- HL7 FHIR R4 (exportação validada e entrada de parceiros); modelo de dados mapeado para Patient, RelatedPerson, Practitioner, PractitionerRole, Organization, EpisodeOfCare, Consent, Encounter + Coverage, Condition, MedicationRequest, AllergyIntolerance, ServiceRequest + DiagnosticReport, DocumentReference, Appointment, Provenance (adendos), AuditEvent
 
 Estrutura do banco: [`supabase/migrations`](supabase/migrations). Dados fictícios: [`supabase/seed.sql`](supabase/seed.sql) (aplicados por `scripts/semear.py`).
 
@@ -76,6 +100,8 @@ npm install
 cp .env.example .env.local   # preencha com o seu projeto Supabase
 npm run dev
 ```
+
+Testes: `node tests/isolamento.mjs` (Node 22, contas de demonstração no ambiente) · `npx tsx tests/alertas.ts` · `bash tests/fhir-validar.sh` (Java 17+ e `validator_cli.jar`).
 
 ## Licença
 

@@ -1,12 +1,12 @@
 import { redirect } from 'next/navigation'
-import { Users, CalendarCheck2, EyeOff, ShieldCheck, Stethoscope } from 'lucide-react'
+import { Users, CalendarCheck2, EyeOff, ShieldCheck, Stethoscope, KeyRound } from 'lucide-react'
 import { Moldura } from '@/components/shell/Moldura'
 import { supabaseServidor } from '@/lib/supabase/server'
-import { dataBR } from '@/lib/formato'
 import { retrato } from '@/lib/retratos'
 import s from './equipe.module.css'
 
 export const dynamic = 'force-dynamic'
+const n = (q: number, um: string, varios: string) => `${q} ${q === 1 ? um : varios}`
 export const metadata = { title: 'Equipe · Elo Saúde' }
 
 type Painel = {
@@ -34,13 +34,13 @@ export default async function Equipe() {
   const nome = (user.user_metadata?.nome as string) ?? 'Gestor'
   const taxaFalta = p.semana.consultas ? Math.round((p.semana.faltas / p.semana.consultas) * 100) : 0
   const kpis = [
-    { rot: 'Consultas hoje', val: p.hoje.consultas, sub: `${p.hoje.confirmadas} confirmadas · ${p.hoje.atendidas} atendidas`, Icone: CalendarCheck2 },
-    { rot: 'Faltas na semana', val: `${taxaFalta}%`, sub: `${p.semana.faltas} de ${p.semana.consultas} consultas`, Icone: CalendarCheck2 },
+    { rot: 'Consultas hoje', val: p.hoje.consultas, sub: `${n(p.hoje.confirmadas, 'confirmada', 'confirmadas')} · ${n(p.hoje.atendidas, 'atendida', 'atendidas')}`, Icone: CalendarCheck2 },
+    { rot: 'Faltas na semana', val: `${taxaFalta}%`, sub: `${n(p.semana.faltas, 'falta', 'faltas')} em ${n(p.semana.consultas, 'consulta', 'consultas')}`, Icone: CalendarCheck2 },
     { rot: 'Pacientes que liberaram o histórico', val: p.consentimentos_ativos, sub: 'consentimentos ativos para a clínica', Icone: ShieldCheck },
     { rot: 'Dossiês abertos pela equipe', val: p.acessos_7d, sub: 'nos últimos 7 dias, todos auditados', Icone: Stethoscope },
   ]
   return (
-    <Moldura nav={[{ k: 'equipe', href: '/clinica/equipe', rotulo: 'Equipe e operação', Icone: Users }]} ativo="equipe"
+    <Moldura nav={[{ k: 'equipe', href: '/clinica/equipe', rotulo: 'Equipe e operação', Icone: Users }, { k: 'seguranca', href: '/conta/seguranca', rotulo: 'Segurança da conta', Icone: KeyRound }]} ativo="equipe"
       usuario={{ nome, papel: `Gestor · ${p.organizacao?.nome ?? ''}`, iniciais: nome.split(' ').map((x) => x[0]).slice(0, 2).join(''), foto: retrato(nome) }}
       faixa={<div className={s.faixa}><span className={s.eyebrow}>{p.organizacao?.nome} · {p.organizacao?.cidade} · gestão</span><h1>Equipe e operação</h1>
         <p>{p.profissionais.length} profissionais · {p.equipe.length} na equipe de apoio</p></div>}>
@@ -56,8 +56,8 @@ export default async function Equipe() {
           <ul className={s.tabela}>
             {p.profissionais.map((x) => (
               <li key={x.registro}>
-                <div><strong>{x.nome}</strong><span>{x.especialidade ?? 'Clínico'} · {x.registro} · desde {dataBR(x.desde)}</span></div>
-                <span className={s.num}>{x.atendidas_hoje}/{x.consultas_hoje}<small>atendidas hoje</small></span>
+                <div><strong>{x.nome}</strong><span>{x.especialidade ?? 'Clínico'} · {x.registro}</span></div>
+                <span className={s.num}><span>{x.atendidas_hoje} de {x.consultas_hoje}</span><small>atendidas hoje</small></span>
               </li>
             ))}
           </ul>

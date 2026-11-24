@@ -21,7 +21,7 @@ function Entrar({ conta, className, children }: { conta: string; className?: str
 
 function Foto({ nome, ini }: { nome: string; ini: string }) {
   const f = retrato(nome)
-  return f ? <img src={f} alt="" width={56} height={56} className={s.foto} loading="lazy" /> : <span className={s.fotoIni} aria-hidden="true">{ini}</span>
+  return f ? <img src={f} alt="" width={56} height={56} className={s.foto} /> : <span className={s.fotoIni} aria-hidden="true">{ini}</span>
 }
 
 export default async function Inicio({ searchParams }: { searchParams: Promise<{ erro?: string }> }) {
@@ -143,8 +143,24 @@ export default async function Inicio({ searchParams }: { searchParams: Promise<{
                   </div>
                   <h3><FileScan size={20} aria-hidden="true" />Papéis viram histórico</h3><p>Foto da receita, do atestado ou do exame. A IA lê, organiza e o paciente confirma antes de salvar.</p>
                 </article>
-                <article className={`card ${s.cam}`}><h3><Mic size={20} aria-hidden="true" />O médico registra por voz</h3><p>Pelo QR do paciente, vê o resumo e dita o atendimento. A IA estrutura queixa, hipótese e conduta, e ele confirma.</p></article>
-                <article className={`card ${s.cam}`}><h3><Network size={20} aria-hidden="true" />Clínicas e SUS enviam</h3><p>No padrão FHIR, o mesmo da rede nacional de dados do SUS. Laboratórios e unidades entregam direto no dossiê certo.</p></article>
+                <article className={`card ${s.cam} ${s.camVoz}`}>
+                  <div className={s.ocr} aria-hidden="true">
+                    <blockquote className={s.fala}><Mic size={15} />“Como ele usa varfarina, vou suspender o diclofenaco.”</blockquote>
+                    <span className={s.ocrSeta}><ArrowRight size={18} /></span>
+                    <ul><li><small>Hipótese</small>Artrose do joelho</li><li><small>Suspender</small>Diclofenaco 50 mg</li><li><small>Exame</small>Raio X do joelho</li></ul>
+                  </div>
+                  <h3><Mic size={20} aria-hidden="true" />O médico registra por voz</h3><p>Pelo QR do paciente, vê o resumo e dita o atendimento. A IA estrutura queixa, hipótese e conduta, e ele confirma e assina.</p>
+                </article>
+                <article className={`card ${s.cam} ${s.camFhir}`}>
+                  <div className={s.fhir} aria-hidden="true">
+                    <pre>{`{ "resourceType": "Observation",
+  "code": { "text": "INR" },
+  "valueQuantity": { "value": 3.8 },
+  "interpretation": "H" }`}</pre>
+                    <span className={s.fhirSelo}><Network size={14} />HL7 FHIR R4 · validado</span>
+                  </div>
+                  <h3><Network size={20} aria-hidden="true" />Laboratórios e clínicas enviam</h3><p>No padrão HL7 FHIR R4, conferido no validador oficial. O resultado chega pelo CPF protegido e entra direto no dossiê certo, sem ninguém digitar.</p>
+                </article>
               </div>
             </section>
 
@@ -184,7 +200,7 @@ export default async function Inicio({ searchParams }: { searchParams: Promise<{
                 </Entrar>
                 <Entrar conta="jose" className={s.cartao}>
                   <Foto nome="José Almeida" ini="JA" />
-                  <span className={s.cTxt}><small>Paciente</small><strong>José, 78 anos</strong><span>Três médicos, seis remédios, varfarina.</span></span>
+                  <span className={s.cTxt}><small>Paciente</small><strong>José, 78 anos</strong><span>Três médicos, sete remédios, varfarina.</span></span>
                   <ArrowRight size={20} aria-hidden="true" className={s.cIr} />
                 </Entrar>
                 <Entrar conta="camila" className={s.cartao}>

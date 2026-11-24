@@ -137,3 +137,13 @@
 
 /* recepção e gestor: faixa própria "equipe da clínica" que fecha a grade (P-ELO-03) */
 .equipeDemo { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+
+/* cartões 2 e 3 de "Como funciona" com o mesmo peso visual do primeiro */
+.camVoz { background: linear-gradient(160deg, #eefbf8, #fbfdff 60%); }
+.camFhir { background: linear-gradient(160deg, #f2f0ff, #fbfdff 60%); }
+.fala { margin: 0; display: grid; gap: 6px; padding: 10px 12px; border-radius: 14px 14px 14px 4px; background: var(--surface); border: 1px solid var(--line); font-size: 13px; line-height: 1.4; color: var(--ink-2); box-shadow: 0 14px 30px -18px rgba(13, 37, 84, .45); }
+.fala svg { color: var(--cobalt-500); }
+.camVoz .ocr { grid-template-columns: minmax(0, 1fr) 32px minmax(0, 1.1fr); }
+.fhir { display: grid; gap: 10px; margin-bottom: 8px; }
+.fhir pre { margin: 0; padding: 14px 16px; border-radius: 14px; background: #0f2a52; color: #dbe7ff; font-family: var(--font-mono, ui-monospace, monospace); font-size: 12.5px; line-height: 1.55; overflow-x: auto; white-space: pre; box-shadow: 0 14px 30px -16px rgba(13, 37, 84, .6); }
+.fhirSelo { justify-self: start; display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px; background: var(--ok-100, #e3f6ec); color: var(--ok, #18794e); font-size: 12px; font-weight: 700; }

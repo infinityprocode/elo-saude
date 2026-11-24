@@ -5,6 +5,7 @@ import { supabaseAdmin } from './supabase/admin'
 // e Observations; acha o paciente pelo HMAC do CPF (o número não fica guardado) e junta os resultados.
 // Usa a chave de serviço só aqui, depois de autenticar o parceiro (token) ou o profissional (consentimento).
 const OID_CPF = 'urn:oid:2.16.840.1.113883.13.237'
+const OID_CNES = 'urn:oid:2.16.840.1.113883.13.36'
 const ALTERADO = new Set(['A', 'AA', 'H', 'HH', 'HU', 'L', 'LL', 'LU', 'POS'])
 type Rec = { resourceType: string; id?: string; [k: string]: unknown }
 const fmt = (n: number) => String(n).replace('.', ',')
@@ -25,6 +26,11 @@ export async function receberBundle(bundle: unknown, origem: string): Promise<Re
   const { data: paciente } = await sb.from('pacientes').select('id, nome').eq('cpf_hmac', hmac).maybeSingle()
   if (!paciente) return { ok: false, erro: 'paciente não encontrado no Elo' }
 
+  // laboratório que assinou a mensagem: CNES no OID oficial do Brasil, ligado à organização cadastrada
+  const orgRec = recursos.find((r) => r.resourceType === 'Organization')
+  const cnes = ((orgRec?.identifier as { system?: string; value?: string }[] | undefined) ?? []).find((i) => i.system === OID_CNES)?.value
+  const { data: org } = cnes ? await sb.from('organizacoes').select('id').eq('cnes', cnes).maybeSingle() : { data: null }
+
   const obs = recursos.filter((r) => r.resourceType === 'Observation' && r.status === 'final').slice(0, 50)
   const linhas = obs.map((o) => {
     const code = o.code as { text?: string; coding?: { display?: string }[] } | undefined
@@ -39,6 +45,7 @@ export async function receberBundle(bundle: unknown, origem: string): Promise<Re
       resultado_em: typeof o.effectiveDateTime === 'string' ? o.effectiveDateTime.slice(0, 10) : null,
       alterado: interp.some((c) => ALTERADO.has(c)) ? true : interp.length ? false : null,
       origem: 'integracao_fhir',
+      organizacao_id: org?.id ?? null,
       origem_ref: `${origem.slice(0, 60)}:${o.id ?? ''}`,
     }
   })

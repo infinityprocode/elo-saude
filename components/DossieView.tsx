@@ -132,7 +132,7 @@ export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], emergenc
                   <span className={`${s.ponto} ${s.pAt}`} aria-hidden="true"><Stethoscope size={15} /></span>
                   <article className={`card ${s.cartao}`}>
                     <div className={s.cTopo}><time className="mono">{dataBR(a.data)} · {horaBR(a.data)}</time><span className={s.tags}><span className={`pill ${REDE[a.rede]?.classe}`}>{REDE[a.rede]?.rotulo}{a.operadora ? ` · ${a.operadora}` : ''}</span><Origem o={a.origem} /></span></div>
-                    <h3><span className={s.tipo}>{TIPO_ATENDIMENTO[a.tipo] ?? a.tipo}</span>{a.organizacoes?.nome ?? a.local_texto ?? 'Local não informado'}</h3>
+                    <h3><span className={s.tipo}>{TIPO_ATENDIMENTO[a.tipo] ?? a.tipo}</span>{a.organizacoes?.nome ?? a.local_texto ?? (a.profissionais ? `Consultório de ${a.profissionais.nome}` : 'Local não informado')}</h3>
                     <p className={s.meta}>{a.profissionais ? `${a.profissionais.nome} · ${a.profissionais.especialidade ?? ''} · ${registroProf(a.profissionais)}` : a.profissional_texto ?? 'Profissional não informado'}{a.organizacoes ? ` · ${TIPO_ORG[a.organizacoes.tipo]} em ${a.organizacoes.cidade}` : ''}</p>
                     <dl className={s.campos}>
                       {a.queixa && <><dt>Queixa</dt><dd>{a.queixa}</dd></>}

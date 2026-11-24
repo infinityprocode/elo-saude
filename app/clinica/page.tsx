@@ -51,7 +51,7 @@ export default async function PainelClinica({ searchParams }: { searchParams: Pr
   const acessos = await meusAcessos(sb)
   const nomePac = new Map(dossies.map((d) => [d.paciente.id, d.paciente.nome]))
 
-  const confirmadas = agenda.filter((c) => c.status === 'confirmado' || c.status === 'atendido').length
+  const confirmadas = agenda.filter((c) => ['confirmado', 'aguardando', 'atendido'].includes(c.status)).length
   const total30 = serie.reduce((a, p) => a + p.v, 0)
   const abertos = serie.filter((p) => p.v > 0)
   const media = abertos.reduce((a, p) => a + p.v, 0) / Math.max(abertos.length, 1)
@@ -80,7 +80,7 @@ export default async function PainelClinica({ searchParams }: { searchParams: Pr
   const focoAl = foco ? alertasPorPac.get(foco.pacienteId!) ?? [] : []
   const briefing = comAlertaHoje.map((c) => { const al = (alertasPorPac.get(c.pacienteId!) ?? [])[0]; return `${c.hora} · ${c.nome}: ${al?.titulo ?? ''}` })
 
-  const confirmadasDe = (id?: string) => { const l = agendaToda.filter((c) => !id || c.profissionalId === id); return pct(l.filter((c) => c.status === 'confirmado' || c.status === 'atendido').length, l.length) }
+  const confirmadasDe = (id?: string) => { const l = agendaToda.filter((c) => !id || c.profissionalId === id); return pct(l.filter((c) => ['confirmado', 'aguardando', 'atendido'].includes(c.status)).length, l.length) }
 
   return (
     <Moldura nav={navClinica(todos.length)} ativo="painel" alertas={todos.length} perguntar="#assistente"
@@ -225,7 +225,7 @@ export default async function PainelClinica({ searchParams }: { searchParams: Pr
             {chegou.map((c) => (
               <li key={c.id}>
                 <span className={`${s.feedIco} ${c.origem === 'paciente_foto' ? s.fFoto : s.fFhir}`} aria-hidden="true">{c.origem === 'paciente_foto' ? <FileScan size={17} /> : <Network size={17} />}</span>
-                <span className={s.feedTxt}><Link href={`/clinica/p/${c.pid}`}>{c.titulo}</Link><span>{c.quem} · {c.de}</span></span>
+                <span className={s.feedTxt}><Link href={`/clinica/p/${c.pid}`}>{c.titulo}</Link><span>{[c.quem, c.de].filter(Boolean).join(' · ')}</span></span>
                 <span className={s.feedFim}><span className={`pill ${c.origem === 'paciente_foto' ? 'or-foto' : 'or-fhir'}`}>{c.origem === 'paciente_foto' ? 'Foto lida' : 'FHIR'}</span><time className="num">{dataBR(c.quando)}</time></span>
               </li>
             ))}

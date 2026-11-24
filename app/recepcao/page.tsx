@@ -1,10 +1,12 @@
 import { redirect } from 'next/navigation'
-import { CalendarCheck2, EyeOff, UserCheck, UserX, PhoneCall } from 'lucide-react'
+import { CalendarCheck2, EyeOff, UserCheck, UserX, PhoneCall, Undo2, ShieldCheck } from 'lucide-react'
 import { Moldura } from '@/components/shell/Moldura'
 import { supabaseServidor } from '@/lib/supabase/server'
 import { horaBR } from '@/lib/formato'
 import { retrato } from '@/lib/retratos'
 import { marcar } from './actions'
+
+const n = (q: number, um: string, varios: string) => `${q} ${q === 1 ? um : varios}`
 import s from './recepcao.module.css'
 
 export const dynamic = 'force-dynamic'
@@ -33,10 +35,10 @@ export default async function Recepcao() {
   const nome = (user.user_metadata?.nome as string) ?? 'Recepção'
   const conta = (st: string) => agenda.filter((a) => a.status === st).length
   return (
-    <Moldura nav={[{ k: 'agenda', href: '/recepcao', rotulo: 'Agenda do dia', Icone: CalendarCheck2 }]} ativo="agenda"
+    <Moldura nav={[{ k: 'agenda', href: '/recepcao', rotulo: 'Agenda do dia', Icone: CalendarCheck2 }, { k: 'seguranca', href: '/conta/seguranca', rotulo: 'Segurança da conta', Icone: ShieldCheck }]} ativo="agenda"
       usuario={{ nome, papel: `Recepção · ${nomeOrg}`, iniciais: nome.split(' ').map((x) => x[0]).slice(0, 2).join(''), foto: retrato(nome) }}
       faixa={<div className={s.faixa}><span className={s.eyebrow}>{nomeOrg} · recepção</span><h1>Agenda de hoje</h1>
-        <p>{agenda.length} consultas · {conta('confirmado')} confirmadas · {conta('aguardando')} na sala de espera · {conta('faltou')} faltas</p></div>}>
+        <p>{agenda.length} consultas · {n(conta('confirmado') + conta('aguardando') + conta('atendido'), 'confirmada', 'confirmadas')} · {conta('aguardando')} na sala de espera · {n(conta('faltou'), 'falta', 'faltas')}</p></div>}>
       <div className={s.pagina}>
         <p className={s.privacidade}><EyeOff size={16} aria-hidden="true" />A recepção vê nome, horário e profissional. Alergias, remédios e histórico ficam só com quem atende, e o banco não entrega esses dados para este acesso.</p>
         {agenda.length === 0 && <p className={s.vazio}>Nenhuma consulta para hoje.</p>}
@@ -56,7 +58,7 @@ export default async function Recepcao() {
                   {a.status === 'agendado' && botao('confirmado', 'Confirmou', PhoneCall)}
                   {['agendado', 'confirmado'].includes(a.status) && botao('aguardando', 'Chegou', UserCheck)}
                   {['agendado', 'confirmado'].includes(a.status) && botao('faltou', 'Faltou', UserX)}
-                  {['aguardando', 'faltou'].includes(a.status) && botao('confirmado', 'Desfazer', PhoneCall)}
+                  {['aguardando', 'faltou'].includes(a.status) && botao('confirmado', 'Desfazer', Undo2)}
                 </div>
               </li>
             )

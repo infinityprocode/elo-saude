@@ -20,6 +20,6 @@ export async function simularLaboratorio(form: FormData) {
   const d = await carregarDossie(sb, id)
   if (!d) redirect('/')
   const ontem = new Date(Date.now() - 864e5).toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' })
-  const r = await receberBundle(mensagemLaboratorio(ontem), 'Laboratório Vale Litoral')
+  const r = await receberBundle(mensagemLaboratorio(ontem), 'Laboratório Análise Norte')
   redirect(`${voltar}?lab=${r.ok ? (r.inseridos ? `novos-${r.inseridos}` : 'repetido') : 'erro'}#resumo`)
 }

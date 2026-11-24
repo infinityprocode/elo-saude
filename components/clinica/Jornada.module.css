@@ -9,7 +9,7 @@
 .legenda span { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; }
 
 /* trilho: rola na horizontal no celular, ocupa a largura no computador */
-.trilho { list-style: none; margin: 0; padding: 4px 2px 8px; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(190px, 1fr); gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; position: relative; scrollbar-width: none; }
+.trilho { list-style: none; margin: 0; padding: 10px 10px 8px; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(190px, 1fr); gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; position: relative; scrollbar-width: none; }
 .trilho::-webkit-scrollbar { display: none; }
 .trilho::before { content: ''; position: absolute; left: 24px; right: 24px; top: 26px; height: 3px; border-radius: 3px; background: linear-gradient(90deg, #6fd4b4, #5c8ff5 50%, #9b8cf0); opacity: .55; }
 .passo { position: relative; scroll-snap-align: start; display: grid; gap: 4px; align-content: start; padding-top: 0; }
@@ -25,7 +25,7 @@
 .no.part { background: linear-gradient(150deg, #5c8ff5, #1f5bd6); }
 .no.conv { background: linear-gradient(150deg, #9b8cf0, #5a4fb3); }
 .passoAlerta .no { box-shadow: 0 0 0 4px #f7faff, 0 0 0 7px rgba(195, 53, 47, .55), 0 8px 18px -8px rgba(195, 53, 47, .7); }
-.bandeira { position: absolute; top: -4px; left: 40px; display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: #fff8f7; background: var(--crit); padding: 3px 8px; border-radius: 999px; box-shadow: 0 6px 14px -6px rgba(195, 53, 47, .8); }
+.bandeira { position: absolute; top: 14px; left: 66px; display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: #fff8f7; background: var(--crit); padding: 3px 8px; border-radius: 999px; box-shadow: 0 6px 14px -6px rgba(195, 53, 47, .8); }
 .hoje .no { background: var(--surface); color: var(--cobalt-600); border: 3px dashed var(--cobalt-400); }
 .hoje time { color: var(--cobalt-600); }
 .achado { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 4px 14px; align-items: center; padding: 14px 16px; border-radius: 20px; background: linear-gradient(90deg, #fff1ef, #fff8f7); border: 1px solid #f6c9c3; color: var(--ink-2); font-size: 14px; line-height: 1.45; }
@@ -35,3 +35,4 @@
 .achado:hover { border-color: var(--crit-400); }
 @media (min-width: 760px) { .achado { grid-template-columns: 40px minmax(0, 1fr) auto; } .abrir { grid-column: auto; } }
 @media (min-width: 1024px) { .trilho { grid-auto-columns: minmax(140px, 1fr); } }
+@media (max-width: 700px) { .trilho { -webkit-mask-image: linear-gradient(90deg, #000 82%, transparent); mask-image: linear-gradient(90deg, #000 82%, transparent); } }
