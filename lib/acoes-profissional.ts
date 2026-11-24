@@ -36,6 +36,9 @@ export async function registrarAtendimento(form: FormData) {
   }))
   const ex = String(form.get('exames') ?? '').split('\n').map((x) => x.trim()).filter(Boolean).slice(0, 20)
   if (ex.length) await sb.from('exames').insert(ex.map((nome) => ({ paciente_id: pacienteId, nome, pedido_em: hoje, atendimento_id: at.id, origem: 'profissional' })))
+  // P-ELO-05: suspensões confirmadas pelo médico (o banco confere consentimento e o atendimento dele)
+  const susp = form.getAll('susp').map(String).filter((v) => /^[0-9a-f-]{36}$/.test(v)).slice(0, 20)
+  for (const med of susp) await sb.rpc('suspender_medicamento', { med, atendimento: at.id })
   if (hipotese) await sb.from('condicoes').insert({ paciente_id: pacienteId, descricao: hipotese, cid10: so(form.get('cid10')), status: 'hipotese', inicio: hoje, atendimento_id: at.id, origem: 'profissional' })
   redirect(`${destino}?registrado=1#linha`)
 }

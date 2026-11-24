@@ -99,3 +99,10 @@
   .acessos li { grid-template-columns: 10px minmax(0, 1fr) auto; }
   .acessos time { grid-column: auto; }
 }
+
+/* P-ELO-01: aviso de abertura do cartão de emergência */
+.emergAviso { border: 1px solid color-mix(in oklab, var(--crit) 30%, transparent); background: var(--crit-100); border-radius: var(--r-card); padding: 16px 18px; display: grid; gap: 8px; }
+.emergAviso h2 { font-size: var(--t-15); color: var(--crit); margin: 0; }
+.emergAviso ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; color: var(--ink); }
+.emergAviso p { margin: 0; color: var(--ink-2); font-size: var(--t-13); }
+.emergAviso a { color: var(--crit); font-weight: 600; }

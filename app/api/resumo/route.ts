@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { permitir, MIN } from '@/lib/limite'
 import { supabaseServidor } from '@/lib/supabase/server'
 import { carregarDossie, emUso } from '@/lib/dossie'
 import { calcularAlertas } from '@/lib/alertas'
@@ -13,6 +14,7 @@ export async function POST(req: Request) {
   const sb = await supabaseServidor()
   const { data: { user } } = await sb.auth.getUser()
   if (!user) return NextResponse.json({ erro: 'entre de novo' }, { status: 401 })
+  if (!permitir(`resumo:${user.id}`, 20, 10 * MIN)) return NextResponse.json({ erro: 'Muitos pedidos seguidos. Espere alguns minutos.' }, { status: 429 })
   const d = await carregarDossie(sb, String(pacienteId))
   if (!d) return NextResponse.json({ erro: 'sem acesso' }, { status: 404 })
   const alertas = calcularAlertas(d)

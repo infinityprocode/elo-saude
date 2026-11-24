@@ -19,13 +19,16 @@ export default async function DossiePaciente({ params, searchParams }: { params:
   if (!d) notFound()
   const { data: acessos } = await sb.from('acessos').select('id,ator_nome,organizacao_nome,acao,em').eq('paciente_id', id).order('em', { ascending: false }).limit(10)
   const { data: { user } } = await sb.auth.getUser()
+  // P-ELO-01: o paciente (ou a responsável) é avisado no app quando o cartão de emergência é aberto
+  const seteDias = new Date(Date.now() - 7 * 86400000).toISOString()
+  const { data: emergencias } = await sb.from('acessos').select('id,ator_nome,organizacao_nome,em').eq('paciente_id', id).eq('acao', 'acesso_emergencia').gte('em', seteDias).order('em', { ascending: false })
   const alertas = calcularAlertas(d)
   const base = `/app/p/${id}`
   const nav = navPaciente(id)
   const ehMae = user?.email?.startsWith('marina')
   const quem = ehMae ? 'Marina Souza' : d.paciente.nome
   return (
-    <Moldura nav={nav} ativo="resumo" alertas={alertas.length} usuario={{ nome: quem, papel: ehMae ? 'Responsável pela Lívia' : 'Titular', iniciais: iniciais(quem), foto: retrato(quem) }}
+    <Moldura nav={nav} ativo="resumo" alertas={alertas.length + (emergencias ?? []).length} usuario={{ nome: quem, papel: ehMae ? 'Responsável pela Lívia' : 'Titular', iniciais: iniciais(quem), foto: retrato(quem) }}
       faixa={<FaixaPaciente d={d} eyebrow={ehMae ? 'Dossiê da Lívia · você é a responsável' : 'Meu dossiê de saúde'} />}
       abas={<>
         <Aba on href={base} Icone={LayoutGrid} titulo="Resumo" sub="alergias, remédios, condições" />
@@ -33,7 +36,7 @@ export default async function DossiePaciente({ params, searchParams }: { params:
         <Aba href={`${base}/compartilhar`} Icone={QrCode} titulo="Compartilhar" sub="QR com prazo" />
         <Aba href={`${base}#acessos`} Icone={ShieldCheck} titulo="Quem viu" sub={`${(acessos ?? []).length} acessos`} />
       </>}>
-      <DossieView d={d} f={f} alertas={alertas} acessos={acessos ?? []} modo="paciente" base={base} cabecalho={false} />
+      <DossieView d={d} f={f} alertas={alertas} acessos={acessos ?? []} emergencias={emergencias ?? []} modo="paciente" base={base} cabecalho={false} />
     </Moldura>
   )
 }

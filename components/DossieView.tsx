@@ -27,7 +27,10 @@ function passa(item: ItemLinha, f: string) {
 type Acesso = { id: string | number; ator_nome: string; organizacao_nome: string | null; acao: string; em: string }
 
 // Dossiê do paciente. Mesmo componente para o paciente (visão própria) e para o profissional (com alertas no topo).
-export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], modo = 'paciente', base, cabecalho = true, ferramentas }: { d: Dossie; f?: string; alertas?: Alerta[]; acessos?: Acesso[]; modo?: 'paciente' | 'profissional'; base: string; cabecalho?: boolean; ferramentas?: React.ReactNode }) {
+type Emergencia = { id: string; ator_nome: string | null; organizacao_nome: string | null; em: string }
+const quandoSP = (iso: string) => new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' })
+
+export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], emergencias = [], modo = 'paciente', base, cabecalho = true, ferramentas }: { d: Dossie; f?: string; alertas?: Alerta[]; acessos?: Acesso[]; emergencias?: Emergencia[]; modo?: 'paciente' | 'profissional'; base: string; cabecalho?: boolean; ferramentas?: React.ReactNode }) {
   const p = d.paciente
   const ativos = d.medicamentos.filter((m) => emUso(m))
   const condicoes = d.condicoes.filter((c) => c.status !== 'resolvida')
@@ -36,6 +39,16 @@ export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], modo = '
 
   return (
     <div className={s.pagina}>
+      {/* P-ELO-01: aviso ao paciente quando alguém abre o cartão de emergência (o acesso já fica na auditoria) */}
+      {modo === 'paciente' && emergencias.length > 0 && (
+        <section className={s.emergAviso} role="alert" aria-labelledby="t-emerg">
+          <h2 id="t-emerg">{emergencias.length === 1 ? 'Seu cartão de emergência foi aberto' : `Seu cartão de emergência foi aberto ${emergencias.length} vezes`}</h2>
+          <ul>{emergencias.map((e) => (
+            <li key={e.id}><strong>{e.ator_nome ?? 'Alguém'}</strong> em {quandoSP(e.em)}{e.organizacao_nome ? <> · motivo: {e.organizacao_nome}</> : null}</li>
+          ))}</ul>
+          <p>Viu só o essencial: alergias, remédios em uso e doenças crônicas. Não reconhece? <a href={`${base}/compartilhar#emergencia`}>Cancele o cartão e gere outro</a>.</p>
+        </section>
+      )}
       {cabecalho && <section className={`${s.cabeca} entra`} id="resumo" style={{ ['--i' as string]: 0 }}>
         <div className={s.cabTopo}>
           <span className={s.avatar} aria-hidden="true">{p.nome.split(' ').map((x) => x[0]).slice(0, 2).join('')}</span>
@@ -164,7 +177,7 @@ export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], modo = '
         <section className={`card ${s.acessos}`} id="acessos" aria-labelledby="t-acessos">
           <h2 id="t-acessos">Quem abriu este dossiê</h2>
           <ul>{acessos.map((a) => (
-            <li key={a.id}><span className={s.aPonto} aria-hidden="true" /><span><strong>{a.ator_nome}</strong>{a.organizacao_nome ? `, ${a.organizacao_nome},` : ''} {({ registrou_atendimento: 'registrou um atendimento', acesso_emergencia: 'usou o acesso de emergência', revogou: 'revogou um consentimento', consentiu: 'deu um consentimento', registrou_adendo: 'registrou um adendo' } as Record<string, string>)[a.acao] ?? 'abriu o dossiê'}</span><time className="mono">{dataBR(a.em)} · {horaBR(a.em)}</time></li>
+            <li key={a.id}><span className={s.aPonto} aria-hidden="true" /><span><strong>{a.ator_nome}</strong>{a.organizacao_nome ? (a.acao === 'acesso_emergencia' ? ` (motivo: ${a.organizacao_nome})` : `, ${a.organizacao_nome},`) : ''} {({ registrou_atendimento: 'registrou um atendimento', acesso_emergencia: 'usou o acesso de emergência', revogou: 'revogou um consentimento', consentiu: 'deu um consentimento', registrou_adendo: 'registrou um adendo' } as Record<string, string>)[a.acao] ?? 'abriu o dossiê'}</span><time className="mono">{dataBR(a.em)} · {horaBR(a.em)}</time></li>
           ))}</ul>
         </section>
       )}

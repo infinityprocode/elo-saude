@@ -151,6 +151,21 @@ for (const [c, esperado] of Object.entries(MATRIZ)) {
   ok('Emergência: devolve alergias e remédios, sem histórico', !!card && Array.isArray(card.alergias) && !('atendimentos' in card))
 }
 
+// Suspender remédio (P-ELO-05): só profissional com consentimento, com atendimento dele; nada se apaga
+{
+  const jose = await entrar('jose'), ricardo = await entrar('ricardo')
+  const { data: meds } = await jose.from('medicamentos').select('id').eq('paciente_id', ID.jose).eq('ativo', true).limit(1)
+  const med = meds?.[0]?.id
+  ok('Suspensão: José tem remédio em uso para o teste', !!med)
+  const qualquer = '00000000-0000-4000-8000-000000000999'
+  const { error: eSemConsent } = await ricardo.rpc('suspender_medicamento', { med, atendimento: qualquer })
+  ok('Suspensão: profissional sem consentimento não suspende', !!eSemConsent)
+  const { error: ePaciente } = await jose.rpc('suspender_medicamento', { med, atendimento: qualquer })
+  ok('Suspensão: o próprio paciente não usa a função de profissional', !!ePaciente)
+  const { data: depois } = await jose.from('medicamentos').select('ativo').eq('id', med).single()
+  ok('Suspensão: o remédio continua em uso depois das tentativas', depois?.ativo === true)
+}
+
 if (erros.length) ok('Nenhuma consulta terminou em erro', false, erros.join(' | '))
 const falhas = resultados.filter((r) => !r.ok)
 for (const r of resultados) console.log(`${r.ok ? 'ok  ' : 'FALHA'}  ${r.nome}${r.ok || !r.detalhe ? '' : `  (${r.detalhe})`}`)

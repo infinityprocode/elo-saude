@@ -14,6 +14,7 @@ export const dynamic = 'force-dynamic'
 const ERROS: Record<string, string> = {
   arquivo: 'Escolha uma foto ou um PDF.', grande: 'Arquivo acima de 10 MB.', tipo: 'Use foto (JPG, PNG, WEBP) ou PDF.',
   envio: 'Não deu para guardar o arquivo. Tente de novo.', ia: 'A leitura automática falhou. Tente de novo em instantes.', salvar: 'Não deu para salvar. Tente de novo.',
+  limite: 'Você enviou muitos documentos na última hora. Espere um pouco e tente de novo.',
 }
 
 export default async function Documentos({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ erro?: string; descartado?: string }> }) {
@@ -45,7 +46,7 @@ export default async function Documentos({ params, searchParams }: { params: Pro
           <div className={s.exemplos}>
             <span className={s.exTit}><Sparkles size={15} aria-hidden="true" />Sem papel à mão? Teste com um documento fictício:</span>
             <div className={s.exLista}>
-              {[['receita', 'Receita (letra de mão)', '/exemplos/receita.png'], ['pedido-exame', 'Pedido de exame', '/exemplos/pedido-exame.png'], ['atestado', 'Atestado', '/exemplos/atestado.png']].map(([k, rot, img]) => (
+              {[['receita', 'Receita (letra de mão)', '/exemplos/receita.png'], ['pedido-exame', 'Pedido de exame', '/exemplos/pedido-exame.png'], ['atestado', 'Atestado', '/exemplos/atestado.png'], ['laudo', 'Laudo de laboratório (PDF)', '/exemplos/laudo-laboratorio.png']].map(([k, rot, img]) => (
                 <Enviar key={k} pacienteId={id} exemplo={k} rotulo={rot} miniatura={img} />
               ))}
             </div>

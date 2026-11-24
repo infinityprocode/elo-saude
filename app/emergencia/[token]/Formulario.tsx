@@ -17,7 +17,7 @@ export function Formulario({ token }: { token: string }) {
         <section><h2><Pill size={18} aria-hidden="true" />Remédios em uso</h2>{c.remedios.length ? <ul>{c.remedios.map((r, i) => <li key={i}><b>{r.nome}</b>{r.posologia ? `, ${r.posologia}` : ''}</li>)}</ul> : <p>Nenhum.</p>}</section>
         <section><h2><ShieldAlert size={18} aria-hidden="true" />Doenças crônicas</h2>{c.cronicas.length ? <ul>{c.cronicas.map((x, i) => <li key={i}>{x}</li>)}</ul> : <p>Nenhuma registrada.</p>}</section>
         {c.contato && <p className={s.linha}><Phone size={16} aria-hidden="true" />{c.contato}</p>}
-        <p className={s.nota}>Este acesso foi registrado e o responsável foi avisado.</p>
+        <p className={s.nota}>Este acesso foi registrado e o paciente ou responsável já vê o aviso no app do Elo.</p>
       </div>
     )
   }
@@ -30,7 +30,7 @@ export function Formulario({ token }: { token: string }) {
       <textarea id="justificativa" name="justificativa" rows={3} placeholder="Ex.: paciente desacordada após queda, sem acompanhante" required />
       {estado.erro && <p className={s.erro}>{estado.erro}</p>}
       <button type="submit" className="btn btn-primario" disabled={enviando}>{enviando ? 'Abrindo...' : 'Abrir cartão de emergência'}</button>
-      <p className={s.nota}>O acesso é registrado com seu nome e motivo, e o paciente ou responsável é avisado.</p>
+      <p className={s.nota}>O acesso é registrado com seu nome e motivo, e o paciente ou responsável é avisado no app do Elo.</p>
     </form>
   )
 }

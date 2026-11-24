@@ -100,7 +100,7 @@ export default async function Compartilhar({ params, searchParams }: { params: P
           </ul>
         </section>
 
-        <section className={`card ${s.emerg}`} aria-labelledby="t-emerg">
+        <section className={`card ${s.emerg}`} id="emergencia" aria-labelledby="t-emerg" style={{ scrollMarginTop: 90 }}>
           <header><h2 id="t-emerg"><Siren size={20} aria-hidden="true" />Cartão de emergência</h2></header>
           <p className={s.sub}>Para quando {ehMae ? `a ${primeiro}` : 'você'} não puder autorizar. Quem ler o QR informa nome e motivo e vê só alergias, remédios em uso e doenças crônicas. Você é avisado de cada uso.</p>
           {qrEmerg && emergencia ? (

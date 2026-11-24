@@ -40,7 +40,7 @@ export default async function ReceberQR({ params, searchParams }: { params: Prom
 
         {user && !prof && <p>Este QR é para profissionais de saúde. Peça ao médico que leia com a conta dele.</p>}
 
-        {prof && !p && <p className={s.aviso}>{falhou ? 'Não deu para receber este acesso.' : 'Este QR venceu, já foi usado ou foi cancelado pelo paciente.'} Peça ao paciente um QR novo.</p>}
+        {prof && !p && <p className={s.aviso}>{falhou === 'limite' ? 'Muitas tentativas seguidas. Espere alguns minutos.' : falhou ? 'Não deu para receber este acesso.' : 'Este QR venceu, já foi usado ou foi cancelado pelo paciente.'} Peça ao paciente um QR novo.</p>}
 
         {prof && p && (
           <>

@@ -10,7 +10,8 @@ import { entrarDemo } from './entrar/actions'
 import m from '@/components/shell/Moldura.module.css'
 import s from './page.module.css'
 
-export const revalidate = 300
+// sem cache estático: a CSP com nonce exige página montada a cada requisição (P-ELO-04)
+export const dynamic = 'force-dynamic'
 
 const LIVIA = '00000000-0000-4000-8000-0000000000c1'
 
@@ -61,7 +62,7 @@ export default async function Inicio({ searchParams }: { searchParams: Promise<{
                 <li><Code2 size={16} aria-hidden="true" />Código aberto</li>
                 <li><ShieldCheck size={16} aria-hidden="true" />IA que não diagnostica</li>
               </ul>
-              {erro && <p className={s.erro}>Não deu para entrar agora. Tente de novo em alguns segundos.</p>}
+              {erro && <p className={s.erro}>{erro === 'limite' ? 'Muitas entradas seguidas deste endereço. Espere alguns minutos e tente de novo.' : 'Não deu para entrar agora. Tente de novo em alguns segundos.'}</p>}
             </div>
 
             <div className={s.palco} aria-hidden="true">

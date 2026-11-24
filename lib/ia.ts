@@ -37,7 +37,8 @@ export type Leitura = {
   profissional: { nome: string | null; conselho: string | null; numero: string | null } | null
   diagnostico: { descricao: string; cid10: string | null; trecho: string } | null
   medicamentos: { nome: string; principio_ativo: string; dose: string | null; posologia: string | null; duracao_dias: number | null; trecho: string; confianca: 'alta' | 'media' | 'baixa' }[]
-  exames: { nome: string; trecho: string }[]
+  // resultado/referencia/alterado só em laudo (resultado_exame); em pedido vêm null
+  exames: { nome: string; trecho: string; resultado: string | null; referencia: string | null; alterado: boolean | null }[]
   afastamento_dias: number | null; orientacoes: string[]; documento_ficticio: boolean; legivel: boolean
 }
 
@@ -56,7 +57,9 @@ const SCHEMA_LEITURA = {
       principio_ativo: { type: 'string', description: 'princípio ativo em minúsculas, sem acento, ex.: cefalexina, acido acetilsalicilico' },
       dose: N('quanto por vez'), posologia: N('frequência e duração como escrito'), duracao_dias: { type: ['integer', 'null'] },
       trecho: { type: 'string', description: 'texto exatamente como aparece no documento' }, confianca: CONF } } },
-    exames: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['nome', 'trecho'], properties: { nome: { type: 'string' }, trecho: { type: 'string' } } } },
+    exames: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['nome', 'trecho', 'resultado', 'referencia', 'alterado'], properties: { nome: { type: 'string' }, trecho: { type: 'string' },
+      resultado: N('em laudo: valor e unidade como escritos, ex.: 132 mg/dL; em pedido: null'), referencia: N('em laudo: faixa de referência impressa; em pedido: null'),
+      alterado: { type: ['boolean', 'null'], description: 'true só se o laudo marca como alterado ou o valor está fora da faixa de referência IMPRESSA; null em pedido ou sem faixa' } } } },
     afastamento_dias: { type: ['integer', 'null'] },
     orientacoes: { type: 'array', items: { type: 'string' } },
     documento_ficticio: { type: 'boolean', description: 'true se o documento diz que é fictício/demonstração' },
@@ -67,7 +70,8 @@ const SCHEMA_LEITURA = {
 const SISTEMA_LEITURA = `Você lê documentos de saúde brasileiros (receitas, atestados, pedidos e resultados de exame, resumos de alta), inclusive letra de mão.
 Regras:
 - Extraia SOMENTE o que está escrito. Nunca deduza diagnóstico, dose ou remédio que não esteja no papel.
-- Em pedidos de exame, liste apenas os exames marcados (com X) ou escritos.
+- Em pedidos de exame, liste apenas os exames marcados (com X) ou escritos (resultado, referencia e alterado = null).
+- Em resultados de exame (laudos), copie o valor com a unidade e a faixa de referência impressa; alterado só pela faixa impressa ou marcação do laudo. Não interprete.
 - Campo ilegível ou ausente: null. Se a leitura de um remédio for incerta, confianca "baixa".
 - "trecho": copie o texto como aparece, para o paciente conferir.
 - Se a imagem não for um documento de saúde, tipo "outro" e listas vazias.
@@ -88,20 +92,24 @@ export type Estrutura = {
   queixa: string | null; hipotese: string | null; cid10: string | null; conduta: string | null
   medicamentos: { nome: string; principio_ativo: string; dose: string | null; posologia: string | null; duracao_dias: number | null }[]
   exames: { nome: string }[]; retorno_dias: number | null
+  // P-ELO-05: remédios que o médico mandou suspender, parar ou trocar (o antigo)
+  suspensos: { nome: string; principio_ativo: string }[]
 }
 const SCHEMA_ESTRUTURA = {
-  type: 'object', additionalProperties: false, required: ['queixa', 'hipotese', 'cid10', 'conduta', 'medicamentos', 'exames', 'retorno_dias'],
+  type: 'object', additionalProperties: false, required: ['queixa', 'hipotese', 'cid10', 'conduta', 'medicamentos', 'exames', 'retorno_dias', 'suspensos'],
   properties: {
     queixa: N('queixa principal, como dita'), hipotese: N('hipótese diagnóstica, como dita'), cid10: N('só se o médico ditou o CID'),
     conduta: N('conduta e orientações, resumidas'),
     medicamentos: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['nome', 'principio_ativo', 'dose', 'posologia', 'duracao_dias'], properties: { nome: { type: 'string' }, principio_ativo: { type: 'string', description: 'minúsculas, sem acento' }, dose: N('dose'), posologia: N('frequência'), duracao_dias: { type: ['integer', 'null'] } } } },
     exames: { type: 'array', items: { type: 'object', additionalProperties: false, required: ['nome'], properties: { nome: { type: 'string' } } } },
     retorno_dias: { type: ['integer', 'null'] },
+    suspensos: { type: 'array', description: 'remédios que o médico mandou suspender, parar ou trocar (o que sai)', items: { type: 'object', additionalProperties: false, required: ['nome', 'principio_ativo'], properties: { nome: { type: 'string' }, principio_ativo: { type: 'string', description: 'minúsculas, sem acento' } } } },
   },
 }
 const SISTEMA_ESTRUTURA = `Você organiza o que um médico ditou ao fim de uma consulta, em português do Brasil.
 Regras: use SOMENTE o que foi dito; não acrescente diagnóstico, remédio, dose ou exame; não corrija a conduta.
-Se algo não foi dito, null ou lista vazia. CID só se o médico falou o código. Texto curto e clínico.`
+Se algo não foi dito, null ou lista vazia. CID só se o médico falou o código. Texto curto e clínico.
+Remédio que o médico mandou suspender, parar ou trocar vai em "suspensos" (o que sai), nunca em "medicamentos" (o que entra).`
 
 export async function estruturarAtendimento(ditado: string): Promise<Estrutura> {
   return iaJSON<Estrutura>(MODELO_TEXTO, [{ role: 'system', content: SISTEMA_ESTRUTURA }, { role: 'user', content: `Ditado do médico:\n"""${ditado.slice(0, 6000)}"""` }], 'atendimento', SCHEMA_ESTRUTURA, 2000)

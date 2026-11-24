@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { History, LayoutGrid, ShieldCheck, Stethoscope } from 'lucide-react'
 import { Moldura, Aba } from '@/components/shell/Moldura'
 import { DossieView } from '@/components/DossieView'
+import { emUso } from '@/lib/dossie'
 import { AtenderPorVoz } from '@/components/profissional/AtenderPorVoz'
 import { ResumoIA } from '@/components/profissional/ResumoIA'
 import { FaixaPaciente } from '@/components/FaixaPaciente'
@@ -32,7 +33,7 @@ export default async function DossieNoConsultorio({ params, searchParams }: { pa
         <Aba href="/consultorio" Icone={Stethoscope} titulo="Meu consultório" sub="agenda e carteira" />
       </>}>
       <DossieView d={d} f={f} alertas={alertas} acessos={acessos ?? []} modo="profissional" base={base} cabecalho={false}
-        ferramentas={<><ResumoIA pacienteId={id} /><AtenderPorVoz pacienteId={id} orgId={undefined} voltar={base} /></>} />
+        ferramentas={<><ResumoIA pacienteId={id} /><AtenderPorVoz pacienteId={id} orgId={undefined} voltar={base} emUso={d.medicamentos.filter((m) => emUso(m)).map((m) => ({ id: m.id, nome: m.nome, principio_ativo: m.principio_ativo }))} /></>} />
     </Moldura>
   )
 }

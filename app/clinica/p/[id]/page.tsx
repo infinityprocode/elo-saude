@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { Activity, History, LayoutGrid, ShieldCheck } from 'lucide-react'
 import { Moldura, Aba } from '@/components/shell/Moldura'
 import { DossieView } from '@/components/DossieView'
+import { emUso } from '@/lib/dossie'
 import { AtenderPorVoz } from '@/components/profissional/AtenderPorVoz'
 import { ResumoIA } from '@/components/profissional/ResumoIA'
 import { FaixaPaciente } from '@/components/FaixaPaciente'
@@ -33,7 +34,7 @@ export default async function DossieNaClinica({ params, searchParams }: { params
         <Aba href="/clinica" Icone={Activity} titulo="Voltar ao painel" sub="agenda de hoje" />
       </>}>
       <DossieView d={d} f={f} alertas={alertas} acessos={acessos ?? []} modo="profissional" base={base} cabecalho={false}
-        ferramentas={<><ResumoIA pacienteId={id} /><AtenderPorVoz pacienteId={id} orgId={prof.orgs[0]?.id} voltar={base} /></>} />
+        ferramentas={<><ResumoIA pacienteId={id} /><AtenderPorVoz pacienteId={id} orgId={prof.orgs[0]?.id} voltar={base} emUso={d.medicamentos.filter((m) => emUso(m)).map((m) => ({ id: m.id, nome: m.nome, principio_ativo: m.principio_ativo }))} /></>} />
     </Moldura>
   )
 }

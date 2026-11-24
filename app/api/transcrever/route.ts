@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { supabaseServidor } from '@/lib/supabase/server'
 import { estruturarAtendimento } from '@/lib/ia'
+import { permitir, MIN } from '@/lib/limite'
 
 export const maxDuration = 120
 
@@ -12,6 +13,7 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ erro: 'entre de novo' }, { status: 401 })
   const { data: prof } = await sb.from('profissionais').select('id').eq('user_id', user.id).maybeSingle()
   if (!prof) return NextResponse.json({ erro: 'só profissionais' }, { status: 403 })
+  if (!permitir(`voz:${user.id}`, 20, 10 * MIN)) return NextResponse.json({ erro: 'Muitos pedidos seguidos. Espere alguns minutos.' }, { status: 429 })
 
   let ditado = ''
   const tipo = req.headers.get('content-type') ?? ''

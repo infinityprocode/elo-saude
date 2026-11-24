@@ -39,3 +39,6 @@
   .grade { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); }
   .foto { position: sticky; top: 24px; }
 }
+
+/* resultado de exame fora da faixa de referência impressa no laudo */
+.foraRef { color: var(--crit); font-style: normal; font-weight: 600; }

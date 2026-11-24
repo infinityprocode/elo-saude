@@ -4,6 +4,7 @@ import { readFile } from 'fs/promises'
 import { join } from 'path'
 import { randomUUID } from 'crypto'
 import { supabaseServidor } from '@/lib/supabase/server'
+import { permitir, MIN } from '@/lib/limite'
 import { lerDocumento, type Leitura } from '@/lib/ia'
 
 const TIPOS: Record<string, string> = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'application/pdf': 'pdf' }
@@ -11,6 +12,7 @@ const EXEMPLOS: Record<string, { arquivo: string; mime: string }> = {
   receita: { arquivo: 'receita-foto.jpg', mime: 'image/jpeg' },
   'pedido-exame': { arquivo: 'pedido-exame-foto.jpg', mime: 'image/jpeg' },
   atestado: { arquivo: 'atestado-foto.jpg', mime: 'image/jpeg' },
+  laudo: { arquivo: 'laudo-laboratorio.pdf', mime: 'application/pdf' },
 }
 const TITULO: Record<Leitura['tipo'], string> = { receita: 'Receita', atestado: 'Atestado', pedido_exame: 'Pedido de exame', resultado_exame: 'Resultado de exame', resumo_alta: 'Resumo de alta', outro: 'Documento' }
 
@@ -22,6 +24,8 @@ export async function enviarDocumento(form: FormData) {
   const sb = await supabaseServidor()
   const { data: { user } } = await sb.auth.getUser()
   if (!user) redirect('/?entrar=1')
+  // custo de IA: 15 leituras por pessoa a cada hora
+  if (!permitir(`leitura:${user.id}`, 15, 60 * MIN)) voltar('erro=limite')
 
   let bytes: Buffer, mime: string
   const exemplo = EXEMPLOS[String(form.get('exemplo') ?? '')]

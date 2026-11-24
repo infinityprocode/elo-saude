@@ -45,7 +45,11 @@ export async function confirmarDocumento(form: FormData) {
     prescritor_id: prof?.id ?? null, atendimento_id: at.id, origem: 'paciente_foto',
   })))
   const exs = L.exames.map((e, i) => ({ e, i })).filter(({ i }) => form.get(`ex_${i}`) === 'on')
-  if (exs.length) await sb.from('exames').insert(exs.map(({ e }) => ({ paciente_id: pacienteId, nome: e.nome, pedido_em: data, atendimento_id: at.id, origem: 'paciente_foto' })))
+  // laudo grava o RESULTADO (valor, data e fora da referência); pedido grava só o pedido
+  const laudo = L.tipo === 'resultado_exame'
+  if (exs.length) await sb.from('exames').insert(exs.map(({ e }) => laudo
+    ? { paciente_id: pacienteId, nome: e.nome, resultado_em: data, resultado: [e.resultado, e.referencia ? `(referência ${e.referencia})` : ''].filter(Boolean).join(' ') || null, alterado: e.alterado ?? null, atendimento_id: at.id, origem: 'paciente_foto' }
+    : { paciente_id: pacienteId, nome: e.nome, pedido_em: data, atendimento_id: at.id, origem: 'paciente_foto' }))
   if (incluirDiag) await sb.from('condicoes').insert({ paciente_id: pacienteId, descricao: L.diagnostico!.descricao, cid10: L.diagnostico!.cid10, status: 'hipotese', inicio: data, atendimento_id: at.id, origem: 'paciente_foto' })
 
   await sb.from('documentos').update({ status: 'confirmado', data_documento: data }).eq('id', docId)

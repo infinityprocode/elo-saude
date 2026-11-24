@@ -10,7 +10,20 @@ const EXEMPLO = 'Paciente retorna com dor no joelho direito, melhorou um pouco c
 type Fase = 'inicio' | 'gravando' | 'processando' | 'revisar'
 
 // Registro do atendimento: o médico fala (ou digita), a IA organiza, o médico revisa e assina.
-export function AtenderPorVoz({ pacienteId, orgId, voltar, redePadrao = 'particular' }: { pacienteId: string; orgId?: string; voltar: string; redePadrao?: string }) {
+// P-ELO-05: casa o que foi ditado como "suspender" com os remédios EM USO do paciente
+const norm = (t: string) => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim()
+type EmUso = { id: string; nome: string; principio_ativo: string }
+function casar(suspensos: Estrutura['suspensos'], emUso: EmUso[]) {
+  const achados: EmUso[] = [], sem: string[] = []
+  for (const x of suspensos) {
+    const alvo = [norm(x.principio_ativo), norm(x.nome)].filter(Boolean)
+    const m = emUso.find((u) => alvo.some((a) => norm(u.principio_ativo).includes(a) || a.includes(norm(u.principio_ativo)) || norm(u.nome).includes(a)))
+    if (m && !achados.some((y) => y.id === m.id)) achados.push(m); else if (!m) sem.push(x.nome)
+  }
+  return { achados, sem }
+}
+
+export function AtenderPorVoz({ pacienteId, orgId, voltar, redePadrao = 'particular', emUso = [] }: { pacienteId: string; orgId?: string; voltar: string; redePadrao?: string; emUso?: EmUso[] }) {
   const [fase, setFase] = useState<Fase>('inicio')
   const [modoTexto, setModoTexto] = useState(false)
   const [texto, setTexto] = useState('')
@@ -27,7 +40,7 @@ export function AtenderPorVoz({ pacienteId, orgId, voltar, redePadrao = 'particu
     const r = await fetch('/api/transcrever', corpo instanceof FormData ? { method: 'POST', body: corpo } : { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(corpo) })
     const j = await r.json().catch(() => ({}))
     setDitado(j.ditado ?? '')
-    if (!r.ok || !j.estrutura) { setErro(j.erro ?? 'Não deu para organizar. Preencha à mão.'); setE({ queixa: null, hipotese: null, cid10: null, conduta: j.ditado ?? null, medicamentos: [], exames: [], retorno_dias: null }) } else setE(j.estrutura)
+    if (!r.ok || !j.estrutura) { setErro(j.erro ?? 'Não deu para organizar. Preencha à mão.'); setE({ queixa: null, hipotese: null, cid10: null, conduta: j.ditado ?? null, medicamentos: [], exames: [], retorno_dias: null, suspensos: [] }) } else setE({ ...j.estrutura, suspensos: j.estrutura.suspensos ?? [] })
     setFase('revisar')
   }
 
@@ -96,6 +109,14 @@ export function AtenderPorVoz({ pacienteId, orgId, voltar, redePadrao = 'particu
               <label>Remédio<input name={`med_${i}_nome`} defaultValue={m.nome} /></label>
               <div className={s.dois}><label>Dose<input name={`med_${i}_dose`} defaultValue={m.dose ?? ''} /></label><label>Como usar<input name={`med_${i}_pos`} defaultValue={[m.posologia, m.duracao_dias ? `por ${m.duracao_dias} dias` : ''].filter(Boolean).join(' ')} /></label></div>
             </div>))}</fieldset>}
+          {e.suspensos.length > 0 && (() => {
+            const { achados, sem } = casar(e.suspensos, emUso)
+            return <fieldset className={s.meds}><legend>Suspender (remédios em uso)</legend>
+              {achados.map((m) => <label key={m.id} className={s.chk}><input type="checkbox" name="susp" value={m.id} defaultChecked />Encerrar <strong>{m.nome}</strong> hoje</label>)}
+              {sem.length > 0 && <p className={s.nota}>Ditado para suspender, mas não está entre os remédios em uso: {sem.join(', ')}.</p>}
+              {achados.length > 0 && <p className={s.nota}>O remédio sai de “em uso” com a data de hoje e o seu atendimento. Nada é apagado.</p>}
+            </fieldset>
+          })()}
           <label>Exames pedidos (um por linha)<textarea name="exames" rows={2} defaultValue={e.exames.map((x) => x.nome).join('\n')} /></label>
           <div className={s.dois}>
             <label>Rede<select name="rede" defaultValue={redePadrao}><option value="sus">SUS</option><option value="particular">Particular</option><option value="convenio">Convênio</option></select></label>

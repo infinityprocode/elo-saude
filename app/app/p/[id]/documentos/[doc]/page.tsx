@@ -75,8 +75,8 @@ export default async function Conferir({ params, searchParams }: { params: Promi
 
           {L.exames.length > 0 && (
             <section className={`card ${s.bloco}`}>
-              <h2><FlaskConical size={18} aria-hidden="true" />Exames pedidos ({L.exames.length})</h2>
-              {L.exames.map((e, i) => <label key={i} className={s.check}><input type="checkbox" name={`ex_${i}`} defaultChecked /><span><b>{e.nome}</b><small>“{e.trecho}”</small></span></label>)}
+              <h2><FlaskConical size={18} aria-hidden="true" />{L.tipo === 'resultado_exame' ? 'Resultados' : 'Exames pedidos'} ({L.exames.length})</h2>
+              {L.exames.map((e, i) => <label key={i} className={s.check}><input type="checkbox" name={`ex_${i}`} defaultChecked /><span><b>{e.nome}</b>{e.resultado ? <em className={e.alterado ? s.foraRef : undefined}>{e.resultado}{e.referencia ? ` · referência ${e.referencia}` : ''}{e.alterado ? ' · fora da referência' : ''}</em> : null}<small>“{e.trecho}”</small></span></label>)}
             </section>
           )}
           {L.afastamento_dias ? <p className={s.info}><FileScan size={15} aria-hidden="true" />Afastamento de {L.afastamento_dias} dias registrado no documento.</p> : null}

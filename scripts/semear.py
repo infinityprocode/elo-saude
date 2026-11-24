@@ -38,7 +38,7 @@ def rodar(sql: str, rotulo: str):
         sys.exit(f'{rotulo} FALHOU: {e.read()[:800].decode()}')
 
 if __name__ == '__main__':
-    for m in ('003_v2_cadastro_unico.sql', '004_demo_agenda.sql', '005_qr_compartilhamento.sql', '006_documentos_ia.sql'):
+    for m in ('003_v2_cadastro_unico.sql', '004_demo_agenda.sql', '005_qr_compartilhamento.sql', '006_documentos_ia.sql', '007_suspender_medicamento.sql'):
         rodar((RAIZ / 'supabase' / 'migrations' / m).read_text(), m)
     rodar(sql_seed(), 'seed')
     rodar("""select (select count(*) from pacientes) pacientes, (select count(*) from profissionais) profissionais,
