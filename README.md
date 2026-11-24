@@ -4,7 +4,7 @@
 
 **Seu histórico de saúde, completo, onde você for.**
 
-Projeto do **Hack Brasil 2026**, trilha **Saúde & bem-estar**. Demo: https://elosaude.infinityprocode.com.br
+Projeto do **Hack Brasil 2026**, trilha **Saúde & bem-estar**. Demo: https://elosaude.infinityprocode.com.br · Vídeo (2 min): https://youtu.be/H4m1PuJnDVQ
 
 ## O problema
 
