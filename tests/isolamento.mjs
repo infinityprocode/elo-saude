@@ -40,7 +40,7 @@ const MATRIZ = {
   marina: [ID.livia], jose: [ID.jose], camila: [ID.camila],
   paula: [ID.livia, ID.jose, ID.camila].sort(),   // consentimento para a clínica onde atua
   fernando: [ID.jose],                            // consentimento direto para o consultório dele
-  recepcao: [], ricardo: [], anon: [],
+  recepcao: [], gestor: [], ricardo: [], anon: [],
 }
 const TABELAS = ['atendimentos', 'condicoes', 'medicamentos', 'alergias', 'exames', 'documentos']
 
@@ -164,6 +164,21 @@ for (const [c, esperado] of Object.entries(MATRIZ)) {
   ok('Suspensão: o próprio paciente não usa a função de profissional', !!ePaciente)
   const { data: depois } = await jose.from('medicamentos').select('ativo').eq('id', med).single()
   ok('Suspensão: o remédio continua em uso depois das tentativas', depois?.ativo === true)
+}
+
+// Gestor (P-ELO-03): números da operação pela função do banco, nunca dado clínico, nunca outra clínica
+{
+  const gestor = await entrar('gestor'), recepcao = await entrar('recepcao'), paula = await entrar('paula')
+  const VIDA_PLENA = '00000000-0000-4000-8000-0000000000a4'
+  const { data: painel, error: eG } = await gestor.rpc('painel_gestor', { org: VIDA_PLENA })
+  ok('Gestor: vê os números da própria clínica', !eG && !!painel && Array.isArray(painel.profissionais))
+  ok('Gestor: os números não trazem nome de paciente', !!painel && !JSON.stringify(painel).match(/Lívia|José Almeida|Camila Rocha/))
+  const { error: eR } = await recepcao.rpc('painel_gestor', { org: VIDA_PLENA })
+  ok('Gestor: a recepção não acessa o painel do gestor', !!eR)
+  const { error: eP } = await paula.rpc('painel_gestor', { org: VIDA_PLENA })
+  ok('Gestor: a médica da clínica não acessa o painel do gestor', !!eP)
+  const { error: eO } = await gestor.rpc('painel_gestor', { org: '00000000-0000-4000-8000-0000000000a1' })
+  ok('Gestor: não vê os números de outra organização', !!eO)
 }
 
 if (erros.length) ok('Nenhuma consulta terminou em erro', false, erros.join(' | '))

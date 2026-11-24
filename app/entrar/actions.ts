@@ -11,6 +11,8 @@ const CONTAS = {
   camila: { email: 'camila.demo@elosaude.infinityprocode.com.br', senha: () => process.env.DEMO_CAMILA_SENHA },
   paula: { email: 'paula.demo@elosaude.infinityprocode.com.br', senha: () => process.env.DEMO_PAULA_SENHA },
   fernando: { email: 'fernando.demo@elosaude.infinityprocode.com.br', senha: () => process.env.DEMO_FERNANDO_SENHA },
+  recepcao: { email: 'recepcao.demo@elosaude.infinityprocode.com.br', senha: () => process.env.DEMO_RECEPCAO_SENHA },
+  gestor: { email: 'gestor.demo@elosaude.infinityprocode.com.br', senha: () => process.env.DEMO_GESTOR_SENHA },
 } as const
 
 export async function entrarDemo(form: FormData) {
@@ -24,7 +26,8 @@ export async function entrarDemo(form: FormData) {
   // volta só para caminhos internos conhecidos (evita redirecionamento aberto)
   const volta = String(form.get('volta') ?? '')
   if (/^\/c\/[a-f0-9]{16,64}$/.test(volta)) redirect(volta)
-  redirect(chave === 'paula' ? '/clinica' : chave === 'fernando' ? '/consultorio' : '/app')
+  const { data: { user } } = await sb.auth.getUser()
+  redirect(user ? await destinoDe(sb, user.id) : '/app')
 }
 
 // Entrada com e-mail e senha (contas reais; a demonstração usa os botões acima).

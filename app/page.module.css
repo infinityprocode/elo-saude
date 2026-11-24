@@ -134,3 +134,6 @@
 }
 @media (pointer: coarse) { .janela { transform: none; } }
 @media (prefers-reduced-motion: reduce) { .vidroAl { animation: none; } }
+
+/* recepção e gestor: faixa própria "equipe da clínica" que fecha a grade (P-ELO-03) */
+.equipeDemo { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }

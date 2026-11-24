@@ -192,6 +192,18 @@ export default async function Inicio({ searchParams }: { searchParams: Promise<{
                   <span className={s.cTxt}><small>Paciente</small><strong>Camila, 29 anos</strong><span>Gestante de 24 semanas, pré-natal espalhado.</span></span>
                   <ArrowRight size={20} aria-hidden="true" className={s.cIr} />
                 </Entrar>
+                <div className={s.equipeDemo}>
+                  <Entrar conta="recepcao" className={s.cartao}>
+                    <Foto nome="Juliana Reis" ini="JR" />
+                    <span className={s.cTxt}><small>Recepção da clínica</small><strong>Juliana, recepção</strong><span>Agenda do dia e chegada, sem ver nada clínico.</span></span>
+                    <ArrowRight size={20} aria-hidden="true" className={s.cIr} />
+                  </Entrar>
+                  <Entrar conta="gestor" className={s.cartao}>
+                    <Foto nome="Roberto Dias" ini="RD" />
+                    <span className={s.cTxt}><small>Gestão da clínica</small><strong>Roberto, gestor</strong><span>Equipe e operação em números, sem dados de paciente.</span></span>
+                    <ArrowRight size={20} aria-hidden="true" className={s.cIr} />
+                  </Entrar>
+                </div>
               </div>
               <p className={s.aviso}>Pessoas, unidades, registros e fotos são fictícios. As fotos foram geradas por IA e não mostram pessoas reais.</p>
             </section>

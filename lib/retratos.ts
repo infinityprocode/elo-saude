@@ -5,7 +5,7 @@ import { join } from 'path'
 // Só devolve o caminho se o arquivo existir (sem imagem quebrada); caso contrário, a tela usa as iniciais.
 const R: Record<string, string> = {
   'Rosa Antunes': 'rosa', 'Camila Rocha': 'camila', 'Diego Ferraz': 'diego', 'José Almeida': 'jose', 'Helena Prates': 'helena',
-  'Dra. Paula Nogueira': 'paula', 'Dra. Beatriz Lima': 'beatriz', 'Marina Souza': 'marina', 'Dr. Ricardo Alves': 'ricardo', 'Dr. Fernando Costa': 'fernando', 'Dra. Helena Martins': 'helena_dra',
+  'Dra. Paula Nogueira': 'paula', 'Dra. Beatriz Lima': 'beatriz', 'Marina Souza': 'marina', 'Dr. Ricardo Alves': 'ricardo', 'Dr. Fernando Costa': 'fernando', 'Juliana Reis': 'juliana', 'Roberto Dias': 'roberto', 'Dra. Helena Martins': 'helena_dra',
 }
 export function retrato(nome: string): string | undefined {
   const k = R[nome]

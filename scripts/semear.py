@@ -19,7 +19,7 @@ def h(valor: str) -> str:
 
 def sql_seed() -> str:
     s = (RAIZ / 'supabase' / 'seed.sql').read_text()
-    trocas = {f'{{{{{k}}}}}': os.environ[f'ELO_DEMO_{k.upper()}_ID'] for k in ('marina', 'jose', 'camila', 'paula', 'recepcao', 'fernando', 'ricardo')}
+    trocas = {f'{{{{{k}}}}}': os.environ[f'ELO_DEMO_{k.upper()}_ID'] for k in ('marina', 'jose', 'camila', 'paula', 'recepcao', 'fernando', 'ricardo', 'gestor')}
     for nome, (cpf, cns) in FICTICIOS.items():
         trocas[f'{{{{cpf_{nome}}}}}'] = h(cpf); trocas[f'{{{{cns_{nome}}}}}'] = h(cns); trocas[f'{{{{fim_{nome}}}}}'] = cpf[-2:]
     trocas['{{token_emergencia_livia}}'] = hashlib.sha256(CHAVE + b'emergencia-livia').hexdigest()[:36]
@@ -38,7 +38,7 @@ def rodar(sql: str, rotulo: str):
         sys.exit(f'{rotulo} FALHOU: {e.read()[:800].decode()}')
 
 if __name__ == '__main__':
-    for m in ('003_v2_cadastro_unico.sql', '004_demo_agenda.sql', '005_qr_compartilhamento.sql', '006_documentos_ia.sql', '007_suspender_medicamento.sql', '008_duas_etapas.sql'):
+    for m in ('003_v2_cadastro_unico.sql', '004_demo_agenda.sql', '005_qr_compartilhamento.sql', '006_documentos_ia.sql', '007_suspender_medicamento.sql', '008_duas_etapas.sql', '009_recepcao_gestor.sql'):
         rodar((RAIZ / 'supabase' / 'migrations' / m).read_text(), m)
     rodar(sql_seed(), 'seed')
     rodar("""select (select count(*) from pacientes) pacientes, (select count(*) from profissionais) profissionais,

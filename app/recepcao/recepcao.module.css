@@ -1,0 +1,20 @@
+.faixa { display: grid; gap: 8px; padding: 8px 0 18px; }
+.faixa h1 { font-size: clamp(36px, 6vw, 64px); font-weight: 300; letter-spacing: -0.045em; line-height: 1; margin: 0; color: #0f2a52; }
+.faixa p { margin: 0; color: var(--ink-2); font-weight: 500; }
+.eyebrow { font-size: 14px; color: var(--ink-2); font-weight: 500; }
+.pagina { display: grid; gap: 14px; }
+.privacidade { display: flex; gap: 8px; align-items: flex-start; margin: 0; padding: 12px 14px; border-radius: var(--r-in); background: var(--surface-2); border: 1px solid var(--line); color: var(--ink-2); font-size: var(--t-13); }
+.privacidade svg { flex: none; margin-top: 2px; color: var(--cobalt-600); }
+.vazio { color: var(--ink-3); }
+.lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.linha { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; grid-template-areas: "hora quem pill" "hora acoes acoes"; gap: 6px 14px; align-items: center; padding: 14px 16px; }
+.hora { grid-area: hora; font-size: 20px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; align-self: start; }
+.quem { grid-area: quem; display: grid; gap: 2px; min-width: 0; }
+.quem strong { color: var(--ink); }
+.quem span { color: var(--ink-3); font-size: var(--t-13); }
+.linha :global(.pill) { grid-area: pill; justify-self: end; }
+.acoes { grid-area: acoes; display: flex; flex-wrap: wrap; gap: 8px; }
+.acao { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--surface); color: var(--ink-2); font: inherit; font-size: var(--t-13); font-weight: 600; cursor: pointer; }
+.acao:hover { border-color: var(--cobalt-400); color: var(--cobalt-700); }
+.acao:focus-visible { outline: none; box-shadow: var(--ring); }
+@media (max-width: 560px) { .linha { grid-template-columns: 52px minmax(0, 1fr); grid-template-areas: "hora quem" "hora pill" "acoes acoes"; } .linha :global(.pill) { justify-self: start; } }

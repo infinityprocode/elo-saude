@@ -30,7 +30,8 @@ insert into atuacoes (profissional_id, organizacao_id) values
  ('00000000-0000-4000-8000-0000000000b6','00000000-0000-4000-8000-0000000000a6');
 
 -- recepção da Clínica Vida Plena: agenda sim, dado clínico não
-insert into equipe_org (user_id, organizacao_id, papel) values ('{{recepcao}}','00000000-0000-4000-8000-0000000000a4','recepcao');
+insert into equipe_org (user_id, organizacao_id, papel) values ('{{recepcao}}','00000000-0000-4000-8000-0000000000a4','recepcao'),
+ ('{{gestor}}','00000000-0000-4000-8000-0000000000a4','gestor');
 
 -- ===== Pacientes (CPF e CNS fictícios, guardados só como HMAC) =====
 insert into pacientes (id, nome, nascimento, sexo, cpf_hmac, cns_hmac, cpf_final, peso_kg, tipo_sanguineo, cidade, contato_emergencia, gestante) values
