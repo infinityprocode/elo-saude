@@ -11,3 +11,9 @@
 .aviso { color: var(--warn) !important; background: var(--warn-100); padding: 10px 14px; border-radius: 14px; }
 .nota { font-size: 13px !important; color: var(--ink-3) !important; }
 .voltar { font-size: 14px; font-weight: 600; }
+/* formulários de entrada e verificação (P-ELO-04) usam este mesmo cartão */
+.formulario { display: grid; gap: 12px; width: 100%; text-align: left; }
+.formulario label { display: grid; gap: 6px; font-size: 14px; font-weight: 600; color: var(--ink-2); }
+.formulario input { font: inherit; font-size: 16px; padding: 12px 14px; border-radius: var(--r-in); border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); }
+.formulario input:focus-visible { outline: none; box-shadow: var(--ring); border-color: var(--cobalt-500); }
+.formulario button { justify-content: center; }

@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 type Cookie = { name: string; value: string; options: CookieOptions }
 
 // Rotas que exigem sessão (o banco ainda confere tudo por RLS; aqui é só o redirecionamento).
-const PROTEGIDAS = ['/app', '/clinica', '/consultorio', '/conta']
+const PROTEGIDAS = ['/app', '/clinica', '/consultorio', '/conta', '/recepcao']
 // Onde a sessão precisa ser lida/renovada (inclui a tela do QR, que mostra "entrar para aceitar").
 const COM_SESSAO = [...PROTEGIDAS, '/c/']
 
@@ -68,6 +68,14 @@ export async function middleware(req: NextRequest) {
   const { data: { user } } = await sb.auth.getUser()
   if (!user && PROTEGIDAS.some((r) => caminho.startsWith(r))) {
     return comCabecalhos(NextResponse.redirect(new URL('/?entrar=1', process.env.NEXT_PUBLIC_APP_URL ?? req.url)), csp)
+  }
+  // 2 etapas (P-ELO-04): ativou e ainda não digitou o código nesta sessão → verificação.
+  // O banco também barra (eu_profissional exige aal2), isto aqui só leva a pessoa para a tela certa.
+  if (user && PROTEGIDAS.some((r) => caminho.startsWith(r))) {
+    const { data: aal } = await sb.auth.mfa.getAuthenticatorAssuranceLevel()
+    if (aal?.nextLevel === 'aal2' && aal.currentLevel !== 'aal2') {
+      return comCabecalhos(NextResponse.redirect(new URL('/verificar', process.env.NEXT_PUBLIC_APP_URL ?? req.url)), csp)
+    }
   }
   return comCabecalhos(res, csp)
 }

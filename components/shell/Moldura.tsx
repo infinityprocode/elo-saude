@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
-import { Bell, Search, Sparkles } from 'lucide-react'
+import { Bell, Search, ShieldCheck, Sparkles } from 'lucide-react'
 import { Marca } from '@/components/Marca'
 import s from './Moldura.module.css'
 
@@ -32,6 +32,7 @@ export function Moldura({ nav, ativo, usuario, alertas = 0, perguntar, faixa, ab
             <div className={s.acoes}>
               <a href="#busca" className={s.redondo} aria-label="Buscar"><Search size={18} /></a>
               <span className={s.redondo} aria-label={`${alertas} alertas`}><Bell size={18} />{alertas > 0 && <i aria-hidden="true" />}</span>
+              <Link href="/conta/seguranca" className={s.redondo} aria-label="Segurança da conta" title="Segurança da conta"><ShieldCheck size={18} /></Link>
               {perguntar && <a href={perguntar} className={s.perguntar}><Sparkles size={16} aria-hidden="true" />Pergunte ao Elo</a>}
               <form action="/sair" method="post">
                 <button type="submit" className={s.avatar} aria-label={`${usuario.nome}, sair`} title={`${usuario.nome} · sair`}>
