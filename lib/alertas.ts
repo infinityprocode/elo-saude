@@ -3,7 +3,7 @@ import { dataBR } from './formato'
 
 // Alertas de APOIO ao profissional. As regras são uma lista curta e conferida, escrita aqui;
 // nada é inventado pela IA. O alerta aponta e explica; quem decide é o profissional.
-export type Alerta = { id: string; gravidade: 'alta' | 'media'; tipo: 'divergencia' | 'interacao' | 'alergia' | 'exame_repetido'; titulo: string; detalhe: string; quando: string }
+export type Alerta = { id: string; gravidade: 'alta' | 'media'; tipo: 'divergencia' | 'interacao' | 'alergia' | 'exame_repetido' | 'resultado'; titulo: string; detalhe: string; quando: string }
 
 const AINE = ['ibuprofeno', 'diclofenaco', 'naproxeno', 'cetoprofeno', 'nimesulida']
 const PENICILINAS = ['penicilina', 'amoxicilina', 'ampicilina', 'benzilpenicilina']
@@ -97,6 +97,16 @@ export function calcularAlertas(d: Dossie): Alerta[] {
     if (a.nome === b.nome && dias <= 7) out.push({ id: `rep-${a.id}-${b.id}`, gravidade: 'media', tipo: 'exame_repetido', quando: b.pedido_em!,
       titulo: `${a.nome} pedido de novo em ${dias} ${dias === 1 ? 'dia' : 'dias'}`,
       detalhe: a.resultado ? `Já existe resultado de ${dataBR(a.resultado_em)}: ${a.resultado}` : `Pedido anterior em ${dataBR(a.pedido_em)} ainda sem resultado.` })
+  }
+
+  // 5. INR acima da faixa com varfarina em uso na data do resultado (risco de sangramento)
+  const varf = meds.filter((m) => pa(m) === 'varfarina')
+  for (const e of d.exames.filter((x) => x.alterado && x.resultado_em && /\binr\b|protrombina/i.test(x.nome))) {
+    const t = dia(e.resultado_em!)
+    const m = varf.find((v) => dia(v.inicio ?? '1900-01-01') <= t && (!v.fim || dia(v.fim) >= t) && v.ativo)
+    if (m) out.push({ id: `inr-${e.id}`, gravidade: 'alta', tipo: 'resultado', quando: e.resultado_em!,
+      titulo: 'INR fora da faixa com varfarina em uso',
+      detalhe: `${e.nome} de ${dataBR(e.resultado_em)}: ${e.resultado}. ${m.nome} em uso desde ${dataBR(m.inicio)}.` })
   }
 
   return out.sort((x, y) => (x.gravidade === y.gravidade ? (x.quando < y.quando ? 1 : -1) : x.gravidade === 'alta' ? -1 : 1))

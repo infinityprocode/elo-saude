@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { History, LayoutGrid, ShieldCheck, Stethoscope } from 'lucide-react'
 import { Moldura, Aba } from '@/components/shell/Moldura'
 import { DossieView } from '@/components/DossieView'
+import { SimularLaboratorio } from '@/components/profissional/SimularLaboratorio'
 import { emUso } from '@/lib/dossie'
 import { AtenderPorVoz } from '@/components/profissional/AtenderPorVoz'
 import { ResumoIA } from '@/components/profissional/ResumoIA'
@@ -13,9 +14,9 @@ import { navConsultorio } from '../../nav'
 
 export const dynamic = 'force-dynamic'
 
-export default async function DossieNoConsultorio({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ f?: string }> }) {
+export default async function DossieNoConsultorio({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ f?: string; lab?: string }> }) {
   const { id } = await params
-  const { f = 'tudo' } = await searchParams
+  const { f = 'tudo', lab } = await searchParams
   const { sb, prof } = await exigirProfissional()
   const d = await abrirDossie(sb, id)
   if (!d) notFound()
@@ -32,7 +33,7 @@ export default async function DossieNoConsultorio({ params, searchParams }: { pa
         <Aba href={`${base}#acessos`} Icone={ShieldCheck} titulo="Acessos" sub="quem abriu o dossiê" />
         <Aba href="/consultorio" Icone={Stethoscope} titulo="Meu consultório" sub="agenda e carteira" />
       </>}>
-      <DossieView d={d} f={f} alertas={alertas} acessos={acessos ?? []} modo="profissional" base={base} cabecalho={false}
+      <DossieView d={d} f={f} alertas={alertas} acessos={acessos ?? []} modo="profissional" base={base} integracao={<SimularLaboratorio pacienteId={id} voltar={base} lab={lab} />} cabecalho={false}
         ferramentas={<><ResumoIA pacienteId={id} /><AtenderPorVoz pacienteId={id} orgId={undefined} voltar={base} emUso={d.medicamentos.filter((m) => emUso(m)).map((m) => ({ id: m.id, nome: m.nome, principio_ativo: m.principio_ativo }))} /></>} />
     </Moldura>
   )

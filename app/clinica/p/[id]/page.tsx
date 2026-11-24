@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import { Activity, History, LayoutGrid, ShieldCheck } from 'lucide-react'
 import { Moldura, Aba } from '@/components/shell/Moldura'
 import { DossieView } from '@/components/DossieView'
+import { SimularLaboratorio } from '@/components/profissional/SimularLaboratorio'
 import { emUso } from '@/lib/dossie'
 import { AtenderPorVoz } from '@/components/profissional/AtenderPorVoz'
 import { ResumoIA } from '@/components/profissional/ResumoIA'
@@ -13,9 +14,9 @@ import { navClinica } from '../../nav'
 
 export const dynamic = 'force-dynamic'
 
-export default async function DossieNaClinica({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ f?: string }> }) {
+export default async function DossieNaClinica({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ f?: string; lab?: string }> }) {
   const { id } = await params
-  const { f = 'tudo' } = await searchParams
+  const { f = 'tudo', lab } = await searchParams
   const { sb, prof } = await exigirProfissional()
   // o banco confere o consentimento e grava o acesso; sem consentimento, não abre
   const d = await abrirDossie(sb, id)
@@ -33,7 +34,7 @@ export default async function DossieNaClinica({ params, searchParams }: { params
         <Aba href={`${base}#acessos`} Icone={ShieldCheck} titulo="Acessos" sub="quem abriu o dossiê" />
         <Aba href="/clinica" Icone={Activity} titulo="Voltar ao painel" sub="agenda de hoje" />
       </>}>
-      <DossieView d={d} f={f} alertas={alertas} acessos={acessos ?? []} modo="profissional" base={base} cabecalho={false}
+      <DossieView d={d} f={f} alertas={alertas} acessos={acessos ?? []} modo="profissional" base={base} integracao={<SimularLaboratorio pacienteId={id} voltar={base} lab={lab} />} cabecalho={false}
         ferramentas={<><ResumoIA pacienteId={id} /><AtenderPorVoz pacienteId={id} orgId={prof.orgs[0]?.id} voltar={base} emUso={d.medicamentos.filter((m) => emUso(m)).map((m) => ({ id: m.id, nome: m.nome, principio_ativo: m.principio_ativo }))} /></>} />
     </Moldura>
   )

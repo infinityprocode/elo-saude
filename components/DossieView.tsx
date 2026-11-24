@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { CalendarClock, Droplet, FlaskConical, MapPin, Phone, Pill, Scale, ShieldAlert, Stethoscope, TriangleAlert } from 'lucide-react'
+import { CalendarClock, Droplet, FileJson, FlaskConical, MapPin, Phone, Pill, Scale, ShieldAlert, Stethoscope, TriangleAlert } from 'lucide-react'
 import { emUso, linhaDoTempo, type Dossie, type ItemLinha } from '@/lib/dossie'
 import type { Alerta } from '@/lib/alertas'
 import { dataBR, horaBR, idade, ORIGEM, REDE, TIPO_ATENDIMENTO, TIPO_ORG, registroProf } from '@/lib/formato'
@@ -30,7 +30,7 @@ type Acesso = { id: string | number; ator_nome: string; organizacao_nome: string
 type Emergencia = { id: string; ator_nome: string | null; organizacao_nome: string | null; em: string }
 const quandoSP = (iso: string) => new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' })
 
-export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], emergencias = [], modo = 'paciente', base, cabecalho = true, ferramentas }: { d: Dossie; f?: string; alertas?: Alerta[]; acessos?: Acesso[]; emergencias?: Emergencia[]; modo?: 'paciente' | 'profissional'; base: string; cabecalho?: boolean; ferramentas?: React.ReactNode }) {
+export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], emergencias = [], modo = 'paciente', base, cabecalho = true, ferramentas, integracao }: { integracao?: React.ReactNode; d: Dossie; f?: string; alertas?: Alerta[]; acessos?: Acesso[]; emergencias?: Emergencia[]; modo?: 'paciente' | 'profissional'; base: string; cabecalho?: boolean; ferramentas?: React.ReactNode }) {
   const p = d.paciente
   const ativos = d.medicamentos.filter((m) => emUso(m))
   const condicoes = d.condicoes.filter((c) => c.status !== 'resolvida')
@@ -71,6 +71,11 @@ export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], emergenc
           <div className={s.emerg}><Phone size={15} aria-hidden="true" /><span><small>Emergência</small>{p.contato_emergencia ?? 'Não informado'}</span></div>
         </div>
       </section>}
+
+      <div className={s.interop} aria-label="Interoperabilidade">
+        <a href={`/api/fhir/paciente/${p.id}`} className={s.interopLink} download><FileJson size={15} aria-hidden="true" />Baixar em HL7 FHIR R4</a>
+        {integracao}
+      </div>
 
       {alertas.length > 0 && (
         <section className={`card ${s.alertas} entra`} style={{ ['--i' as string]: 1 }} aria-labelledby="t-alertas" id="alertas">
@@ -177,7 +182,7 @@ export function DossieView({ d, f = 'tudo', alertas = [], acessos = [], emergenc
         <section className={`card ${s.acessos}`} id="acessos" aria-labelledby="t-acessos">
           <h2 id="t-acessos">Quem abriu este dossiê</h2>
           <ul>{acessos.map((a) => (
-            <li key={a.id}><span className={s.aPonto} aria-hidden="true" /><span><strong>{a.ator_nome}</strong>{a.organizacao_nome ? (a.acao === 'acesso_emergencia' ? ` (motivo: ${a.organizacao_nome})` : `, ${a.organizacao_nome},`) : ''} {({ registrou_atendimento: 'registrou um atendimento', acesso_emergencia: 'usou o acesso de emergência', revogou: 'revogou um consentimento', consentiu: 'deu um consentimento', registrou_adendo: 'registrou um adendo' } as Record<string, string>)[a.acao] ?? 'abriu o dossiê'}</span><time className="mono">{dataBR(a.em)} · {horaBR(a.em)}</time></li>
+            <li key={a.id}><span className={s.aPonto} aria-hidden="true" /><span><strong>{a.ator_nome}</strong>{a.acao === 'recebeu_integracao' ? '' : a.organizacao_nome ? (a.acao === 'acesso_emergencia' ? ` (motivo: ${a.organizacao_nome})` : `, ${a.organizacao_nome},`) : ''} {({ recebeu_integracao: `enviou ${a.organizacao_nome ?? 'resultados'}`, registrou_atendimento: 'registrou um atendimento', acesso_emergencia: 'usou o acesso de emergência', revogou: 'revogou um consentimento', consentiu: 'deu um consentimento', registrou_adendo: 'registrou um adendo' } as Record<string, string>)[a.acao] ?? 'abriu o dossiê'}</span><time className="mono">{dataBR(a.em)} · {horaBR(a.em)}</time></li>
           ))}</ul>
         </section>
       )}

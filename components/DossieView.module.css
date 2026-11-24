@@ -106,3 +106,9 @@
 .emergAviso ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; color: var(--ink); }
 .emergAviso p { margin: 0; color: var(--ink-2); font-size: var(--t-13); }
 .emergAviso a { color: var(--crit); font-weight: 600; }
+
+/* interoperabilidade (P-ELO-02): exportar FHIR e, na demonstração, receber do laboratório */
+.interop { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.interopLink { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--cobalt-600); font-size: var(--t-13); font-weight: 600; text-decoration: none; }
+.interopLink:hover { border-color: var(--cobalt-500); }
+.interopLink:focus-visible { outline: 2px solid var(--cobalt-500); outline-offset: 2px; }
