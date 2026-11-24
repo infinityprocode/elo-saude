@@ -68,7 +68,7 @@ Cada pessoa tem uma identidade só (CPF ou CNS, guardados **apenas como HMAC**; 
 | Função | Como funciona | Trava |
 | --- | --- | --- |
 | Ler documento por foto | Foto ou PDF vai para armazenamento privado; Claude Sonnet 5.5 (via OpenRouter) devolve campos em JSON com o trecho do papel | Nada entra no dossiê sem o paciente conferir; não deduz diagnóstico que não está escrito |
-| Atendimento por voz | Áudio transcrito no nosso servidor (Whisper, instância só do Elo); Claude Haiku 5.5 organiza queixa, hipótese, conduta, receita e exames | O médico revisa e assina; o banco exige consentimento e audita sozinho (trigger) |
+| Atendimento por voz | Áudio transcrito no nosso servidor (faster-whisper, código em [`servicos/transcricao`](servicos/transcricao/servidor.py)); Claude Haiku 5.5 organiza queixa, hipótese, conduta, receita e exames | O médico revisa e assina; o banco exige consentimento e audita sozinho (trigger) |
 | Resumo em 30 segundos | Claude Haiku 5.5 resume o dossiê que o banco liberou para quem pede | Toda frase cita registros reais; frase sem fonte válida é descartada |
 | Alertas | Regras conferidas em código (`lib/alertas.ts`), testadas em `tests/alertas.ts` | A IA só explica; não cria alerta |
 
@@ -100,6 +100,8 @@ npm install
 cp .env.example .env.local   # preencha com o seu projeto Supabase
 npm run dev
 ```
+
+Transcrição do ditado: `pip install faster-whisper numpy` e `ELO_STT_TOKEN=... python3 servicos/transcricao/servidor.py` (precisa de ffmpeg); aponte `ELO_STT_URL` para `http://127.0.0.1:11462`.
 
 Testes: `node tests/isolamento.mjs` (Node 22, contas de demonstração no ambiente) · `npx tsx tests/alertas.ts` · `bash tests/fhir-validar.sh` (Java 17+ e `validator_cli.jar`).
 
